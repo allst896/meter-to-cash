@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Billing Diagnostics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fcfcfb;--ink:#0b0b0b;--ink2:#52514e;--muted:#6f6e69;--rule:#dcdad4;--panel:#f2f1ed;
+--s1:#2a78d6;--s2:#eb6834;--band:#efe9dc;--ok:#1d6b45;--ok-bg:#e1f0e7;--warn:#7a5200;--warn-bg:#f6ead0;--bad:#a3312b;--bad-bg:#f7e4e2}
+@media (prefers-color-scheme:dark){:root:where(:not([data-theme="light"])){--bg:#1a1a19;--ink:#f0efec;--ink2:#c3c2b7;
+--muted:#9c9b92;--rule:#34332f;--panel:#232321;--s1:#3987e5;--s2:#d95926;--band:#2c2a24;--ok:#7cc89c;--ok-bg:#1b3326;--warn:#e3b460;--warn-bg:#33281a;
+--bad:#f08c84;--bad-bg:#3a1d1b}}
+:root[data-theme="dark"]{--bg:#1a1a19;--ink:#f0efec;--ink2:#c3c2b7;--muted:#9c9b92;--rule:#34332f;--panel:#232321;
+--s1:#3987e5;--s2:#d95926;--band:#2c2a24;--ok:#7cc89c;--ok-bg:#1b3326;--warn:#e3b460;--warn-bg:#33281a;--bad:#f08c84;--bad-bg:#3a1d1b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "IBM Plex Sans",system-ui,sans-serif;font-variant-numeric:tabular-nums}
+main{max-width:1040px;margin:0 auto;padding:48px 16px 64px}
+.kicker{color:var(--muted);margin:0 0 6px;font-weight:500}
+.stagenav{display:flex;gap:18px;font-size:.92rem;margin:0 0 6px}
+.stagenav a{color:var(--ink2)}.stagenav span{color:var(--ink);font-weight:500}
+h1{font-size:clamp(1.9rem,4.5vw,2.8rem);line-height:1.12;margin:0 0 16px;font-weight:600;letter-spacing:-.015em}
+.lede{font-size:1.15rem;max-width:66ch;margin:0;color:var(--ink2)}
+.lede strong{color:var(--ink)}
+.steps{display:flex;flex-wrap:wrap;gap:6px 18px;margin:28px 0 40px;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.steps a{color:var(--ink2);text-decoration:none;font-size:.92rem}.steps a:hover{color:var(--ink);text-decoration:underline}
+section{margin:0 0 52px}
+h2{font-size:1.35rem;font-weight:600;margin:0 0 10px;display:flex;align-items:baseline;gap:12px}
+h2 .num{font-family:"IBM Plex Mono",monospace;font-weight:400;font-size:1rem;color:var(--muted)}
+h3{font-size:1.05rem;font-weight:600;margin:28px 0 6px}
+section p{max-width:72ch;color:var(--ink2);margin:0 0 14px}
+.note{font-size:.92rem}
+.scroll{overflow-x:auto;margin:0 0 18px}
+table{border-collapse:collapse;width:100%;font-size:.93rem}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-weight:500;color:var(--ink2);border-bottom:2px solid var(--ink)}
+td.n,th.n{text-align:right}
+.chip{display:inline-block;margin-top:3px;padding:1px 8px;border-radius:4px;font-size:.82rem;font-weight:500;white-space:nowrap}
+.chip.ok{color:var(--ok);background:var(--ok-bg)}.chip.warn{color:var(--warn);background:var(--warn-bg)}.chip.bad{color:var(--bad);background:var(--bad-bg)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 20px;font-size:.9rem;color:var(--ink2);margin:6px 0 10px}
+.sw{display:inline-block;width:14px;height:3px;border-radius:2px;vertical-align:middle;margin-right:6px}
+.sw.s1{background:var(--s1)}.sw.s2{background:repeating-linear-gradient(90deg,var(--s2) 0 5px,transparent 5px 8px)}.sw.band{background:var(--band);height:12px;border:1px solid var(--rule)}
+.gapcharts{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin:0 0 12px}
+.gapfig{margin:0;border:1px solid var(--rule);border-radius:6px;padding:10px 10px 4px;background:var(--bg)}
+.gapfig figcaption{font-weight:600;font-size:.95rem;margin:0 0 2px 4px}
+.gapchart{position:relative}
+.gapchart svg{width:100%;height:auto;display:block}
+.gapchart .band{fill:var(--band)}
+.gapchart .grid{stroke:var(--rule);stroke-width:1}
+.gapchart .tick{fill:var(--muted);font-size:10px;font-family:"IBM Plex Sans",sans-serif}
+.gapchart .line{fill:none;stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.gapchart .line.s1{stroke:var(--s1)}.gapchart .line.s2{stroke:var(--s2);stroke-dasharray:5 3}
+.gapchart .dot{stroke:var(--bg);stroke-width:2}.gapchart .dot.s1{fill:var(--s1)}.gapchart .dot.s2{fill:var(--s2)}
+.gapchart .cross{stroke:var(--muted);stroke-width:1}
+.tip{position:absolute;pointer-events:none;background:var(--bg);border:1px solid var(--rule);border-radius:6px;
+padding:6px 9px;font-size:.82rem;line-height:1.45;box-shadow:0 2px 8px rgba(0,0,0,.12);min-width:160px;color:var(--ink)}
+.tip .muted{color:var(--muted)}
+details{margin:0 0 18px;color:var(--ink2);font-size:.92rem}summary{cursor:pointer;margin-bottom:8px}
+.files{color:var(--ink2);max-width:72ch;padding-left:20px}.files li{margin:0 0 8px}
+code{font-family:"IBM Plex Mono",monospace;font-size:.88em;background:var(--panel);padding:1px 5px;border-radius:3px}
+footer p{color:var(--muted);font-size:.86rem;border-top:1px solid var(--rule);padding-top:16px;margin:0}
+
+.chip.na{color:var(--muted);background:var(--panel)}
+header{margin-bottom:40px}
+table.matrix td{padding:12px}
+table.matrix td:first-child{font-weight:500;color:var(--ink)}
+.callout{border-left:3px solid var(--rule);padding:2px 0 2px 16px;margin:0 0 18px;max-width:72ch;color:var(--ink2)}
+
+.balchart{position:relative;max-width:720px;margin:0 0 8px}
+.balchart svg{width:100%;height:auto;display:block}
+.balchart .band{fill:var(--band)}
+.balchart .grid{stroke:var(--rule);stroke-width:1}
+.balchart .tick{fill:var(--muted);font-size:11px;font-family:"IBM Plex Sans",sans-serif}
+.balchart .lbl{font-size:11px;font-family:"IBM Plex Sans",sans-serif;fill:var(--ink2)}
+.balchart .line{fill:none;stroke-width:2;stroke-linejoin:round}
+.balchart .line.s1{stroke:var(--s2);stroke-dasharray:5 3}.balchart .line.s2{stroke:var(--s1)}
+.balchart .dot{stroke:var(--bg);stroke-width:2}.balchart .dot.s1{fill:var(--s2)}.balchart .dot.s2{fill:var(--s1)}
+.balchart .cross{stroke:var(--muted);stroke-width:1}
+.statement td.total{font-weight:600;color:var(--ink);border-top:2px solid var(--ink)}
+</style></head><body><main>
+
+<header>
+<nav class="stagenav" aria-label="Stages"><a href="metering_report.html">1 Metering</a><a href="rating_report.html">2 Rating</a><span>3 Billing</span></nav>
+<p class="kicker">Meter-to-cash demo · Stage 3 of 5: Billing</p>
+<h1>The balance ties. The interest doesn't.</h1>
+<p class="lede">All three January 1 statements roll forward to the cent. Yet A-1001 is charged
+<strong>$1.28 too much interest</strong>, because a $1,300.00 payment that arrived
+Dec 18 was keyed as Dec 28. The amount was right, so nothing else looked wrong.
+Only recalculating the interest independently, then checking the payment against the bank, shows it.</p>
+</header>
+
+<section><h2>The January 1 statements, as billed</h2>
+<p>Terms: 18% a year, actual days ÷ 365, accrued daily on the unpaid December 1 balance after a
+5-day grace period (from Dec 26). Payments and credits count from their dates; credits apply before interest.
+The true-up carries no interest because it was not billed before January 1.</p>
+<div class="scroll"><table class="statement"><thead><tr><th class="" scope="col"></th><th class="n" scope="col">A-1001 (commercial)</th><th class="n" scope="col">A-1002 (residential)</th><th class="n" scope="col">A-1003 (industrial)</th></tr></thead><tbody><tr><td class="">Prior balance (Dec 1 statement)</td><td class="n">$2,193.06</td><td class="n">$102.96</td><td class="n">$2,331.96</td></tr><tr><td class="">Payments</td><td class="n">−$1,300.00</td><td class="n">−$102.96</td><td class="n">−$2,331.96</td></tr><tr><td class="">Credits</td><td class="n">—</td><td class="n">—</td><td class="n">−$124.90</td></tr><tr><td class="">Interest</td><td class="n">+$3.92</td><td class="n">+$0.15</td><td class="n">$0.00</td></tr><tr><td class="">Current charges, December</td><td class="n">+$2,450.54</td><td class="n">+$109.33</td><td class="n">+$2,357.81</td></tr><tr><td class="">True-up, November</td><td class="n">−$7.11</td><td class="n">−$0.14</td><td class="n">−$1.12</td></tr><tr><td class=""><b>Amount due</b></td><td class="n"><b>$3,340.41</b></td><td class="n"><b>$109.34</b></td><td class="n"><b>$2,231.79</b></td></tr></tbody></table></div>
+</section>
+
+<nav class="steps" aria-label="Steps"><a href="#chain">From rating</a><a href="#s1">1 Roll-forward</a>
+<a href="#s2">2 Interest recalculation</a><a href="#s3">3 Balance periods</a><a href="#s4">4 Ledger vs bank</a></nav>
+
+<section id="chain"><h2>What billing picks up from rating</h2>
+<p>The December 1 bill was November's initial rating as production billed it, with M3 still in the wrong zone. Two
+adjustments arrive on January 1: the zone fix as credit CR-0003 ($124.90, effective
+Dec 15), and the true-up, which replaces metering's estimate with actuals. Together they bring every
+account to November's corrected final rating.</p>
+<div class="scroll"><table class=""><thead><tr><th class="" scope="col">Account</th><th class="n" scope="col">Dec 1 bill (Nov, as billed)</th><th class="n" scope="col">Zone credit</th><th class="n" scope="col">True-up</th><th class="n" scope="col">Net for November</th><th class="n" scope="col">Corrected final rating</th><th class="" scope="col"></th></tr></thead><tbody><tr><td class="">A-1001</td><td class="n">$2,193.06</td><td class="n">$0.00</td><td class="n">−$7.11</td><td class="n">$2,185.95</td><td class="n">$2,185.95</td><td class=""><span class="chip ok"><span aria-hidden="true">✓</span> Ties</span></td></tr><tr><td class="">A-1002</td><td class="n">$102.96</td><td class="n">$0.00</td><td class="n">−$0.14</td><td class="n">$102.82</td><td class="n">$102.82</td><td class=""><span class="chip ok"><span aria-hidden="true">✓</span> Ties</span></td></tr><tr><td class="">A-1003</td><td class="n">$2,331.96</td><td class="n">−$124.90</td><td class="n">−$1.12</td><td class="n">$2,205.94</td><td class="n">$2,205.94</td><td class=""><span class="chip ok"><span aria-hidden="true">✓</span> Ties</span></td></tr></tbody></table></div>
+</section>
+
+<section id="s1"><h2><span class="num">1</span>Balance roll-forward</h2>
+<p>Every statement's lines add up to its printed amount due, the prior balance matches the December 1 statement, and the
+payments match the ledger. That rules out a missing, duplicated or wrong-amount payment, and it is why nothing looked wrong.</p>
+<div class="scroll"><table class=""><thead><tr><th class="" scope="col">Account</th><th class="n" scope="col">Sum of lines</th><th class="n" scope="col">Amount due printed</th><th class="" scope="col">Prior = Dec 1 bill</th><th class="" scope="col">Payments = ledger</th><th class="" scope="col">Result</th></tr></thead><tbody><tr><td class="">A-1001</td><td class="n">$3,340.41</td><td class="n">$3,340.41</td><td class="">Yes</td><td class="">Yes</td><td class=""><span class="chip na"><span aria-hidden="true">–</span> Ties</span></td></tr><tr><td class="">A-1002</td><td class="n">$109.34</td><td class="n">$109.34</td><td class="">Yes</td><td class="">Yes</td><td class=""><span class="chip na"><span aria-hidden="true">–</span> Ties</span></td></tr><tr><td class="">A-1003</td><td class="n">$2,231.79</td><td class="n">$2,231.79</td><td class="">Yes</td><td class="">Yes</td><td class=""><span class="chip na"><span aria-hidden="true">–</span> Ties</span></td></tr></tbody></table></div>
+</section>
+
+<section id="s2"><h2><span class="num">2</span>Independent interest recalculation</h2>
+<p>Recompute interest outside the billing system, from the terms and the cash the bank actually received.
+A-1001 doesn't match. A-1002's late payment does carry interest ($0.15), and the
+recalculation agrees, so the formula itself is fine.</p>
+<div class="scroll"><table class=""><thead><tr><th class="" scope="col">Account</th><th class="n" scope="col">Billed interest</th><th class="n" scope="col">Recalculated (bank dates)</th><th class="n" scope="col">Difference</th><th class="" scope="col">Result</th></tr></thead><tbody><tr><td class="">A-1001</td><td class="n">$3.92</td><td class="n">$2.64</td><td class="n">+$1.28</td><td class=""><span class="chip ok"><span aria-hidden="true">✓</span> Mismatch</span></td></tr><tr><td class="">A-1002</td><td class="n">$0.15</td><td class="n">$0.15</td><td class="n">$0.00</td><td class=""><span class="chip na"><span aria-hidden="true">–</span> Matches</span></td></tr><tr><td class="">A-1003</td><td class="n">$0.00</td><td class="n">$0.00</td><td class="n">$0.00</td><td class=""><span class="chip na"><span aria-hidden="true">–</span> Matches</span></td></tr></tbody></table></div>
+</section>
+
+<section id="s3"><h2><span class="num">3</span>Interest by balance period</h2>
+<p>Breaking A-1001's interest into periods of constant balance puts the difference in one place: the billing system
+has the balance dropping on Dec 28, while the money arrived Dec 18, before the
+grace period even ended. That date is the lead.</p>
+<div class="legend"><span><span class="sw s2" style="background:repeating-linear-gradient(90deg,var(--s2) 0 5px,transparent 5px 8px)"></span>As billed (ledger date)</span>
+<span><span class="sw s1"></span>As received (bank date)</span><span><span class="sw band"></span>Interest accrues</span></div>
+<div class="balchart"></div>
+<div class="gapcharts" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">
+<div><h3>As billed</h3><div class="scroll"><table class=""><thead><tr><th class="" scope="col">Period</th><th class="n" scope="col">Unpaid balance</th><th class="n" scope="col">Days</th><th class="n" scope="col">Interest</th></tr></thead><tbody><tr><td class="">Dec 26 to Dec 28</td><td class="n">$2,193.06</td><td class="n">2</td><td class="n">$2.1630</td></tr><tr><td class="">Dec 28 to Jan 1</td><td class="n">$893.06</td><td class="n">4</td><td class="n">$1.7617</td></tr><tr><td class=""><b>Total</b></td><td class="n"></td><td class="n">6</td><td class="n"><b>$3.92</b></td></tr></tbody></table></div></div>
+<div><h3>Recalculated</h3><div class="scroll"><table class=""><thead><tr><th class="" scope="col">Period</th><th class="n" scope="col">Unpaid balance</th><th class="n" scope="col">Days</th><th class="n" scope="col">Interest</th></tr></thead><tbody><tr><td class="">Dec 26 to Jan 1</td><td class="n">$893.06</td><td class="n">6</td><td class="n">$2.6425</td></tr><tr><td class=""><b>Total</b></td><td class="n"></td><td class="n">6</td><td class="n"><b>$2.64</b></td></tr></tbody></table></div></div>
+</div>
+<p class="note">$1,300.00 × 18% ÷ 365 × 2 days = $1.28: two days of interest on
+money that had already been paid.</p>
+</section>
+
+<section id="s4"><h2><span class="num">4</span>Ledger against bank remittance</h2>
+<p>Match each ledger entry to the bank on its reference. One record disagrees on the date only.</p>
+<div class="scroll"><table class=""><thead><tr><th class="" scope="col">Reference</th><th class="" scope="col">Account</th><th class="" scope="col">Bank: received</th><th class="" scope="col">Ledger: payment date</th><th class="" scope="col">Ledger: entered on</th><th class="n" scope="col">Amount (both)</th><th class="" scope="col">Result</th></tr></thead><tbody><tr><td class=""><code>ACH-20261218-0417</code></td><td class="">A-1001</td><td class="">2026-12-18</td><td class="">2026-12-28</td><td class="">2026-12-18</td><td class="n">$1,300.00</td><td class=""><span class="chip ok"><span aria-hidden="true">✓</span> Date off by 10 days</span></td></tr><tr><td class=""><code>ACH-20261220-0552</code></td><td class="">A-1003</td><td class="">2026-12-20</td><td class="">2026-12-20</td><td class="">2026-12-20</td><td class="n">$2,331.96</td><td class=""><span class="chip na"><span aria-hidden="true">–</span> Matches</span></td></tr><tr><td class=""><code>CHK-20261229-1188</code></td><td class="">A-1002</td><td class="">2026-12-29</td><td class="">2026-12-29</td><td class="">2026-12-29</td><td class="n">$102.96</td><td class=""><span class="chip na"><span aria-hidden="true">–</span> Matches</span></td></tr></tbody></table></div>
+<p class="callout">The bank received <code>ACH-20261218-0417</code> on Dec 18, and the reference
+itself carries that date. The ledger entry was keyed on Dec 18 with a payment date of
+Dec 28, 10 days after the day it was entered, which is impossible. The payment record is wrong, not the
+interest formula. Fix: correct the date, recalculate, and the amount due falls from $3,340.41 to $3,339.13.</p>
+</section>
+
+<section><h2>Handed to invoicing</h2>
+<ul class="files">
+<li><code>output/statements.csv</code> — every statement line per account, as billed and corrected.</li>
+<li><code>output/billing_checks.csv</code> — roll-forward, interest recalculation and ledger-vs-bank results per account.</li>
+</ul></section>
+
+<footer><p>Synthetic data (seed 7); November and December charges from the rating stage. Scenario design from real
+settlement work by Archer Opitz; built with AI assistance.</p></footer>
+</main>
+<script type="application/json" id="bal-data">{"days": ["Dec 15", "Dec 16", "Dec 17", "Dec 18", "Dec 19", "Dec 20", "Dec 21", "Dec 22", "Dec 23", "Dec 24", "Dec 25", "Dec 26", "Dec 27", "Dec 28", "Dec 29", "Dec 30", "Dec 31", "Jan 1"], "billed": [2193.06, 2193.06, 2193.06, 2193.06, 2193.06, 2193.06, 2193.06, 2193.06, 2193.06, 2193.06, 2193.06, 2193.06, 2193.06, 893.06, 893.06, 893.06, 893.06, 893.06], "actual": [2193.06, 2193.06, 2193.06, 893.06, 893.06, 893.06, 893.06, 893.06, 893.06, 893.06, 893.06, 893.06, 893.06, 893.06, 893.06, 893.06, 893.06, 893.06], "window": [11, 17]}</script>
+<script>
+(function(){
+  const d = JSON.parse(document.getElementById('bal-data').textContent);
+  const NS='http://www.w3.org/2000/svg', host=document.querySelector('.balchart');
+  const el=(t,a)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);return e;};
+  const W=720,H=250,L=64,R=110,T=14,B=30,n=d.days.length;
+  const ymax=Math.ceil(Math.max(...d.billed)/500)*500;
+  const x=i=>L+(W-L-R)*i/(n-1), y=v=>T+(H-T-B)*(1-v/ymax);
+  const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'Unpaid balance by day, as billed and as received'});
+  svg.appendChild(el('rect',{x:x(d.window[0]),y:T,width:x(d.window[1])-x(d.window[0]),height:H-T-B,class:'band'}));
+  const wl=el('text',{x:(x(d.window[0])+x(d.window[1]))/2,y:T+12,class:'lbl','text-anchor':'middle'});wl.textContent='Interest accrues';svg.appendChild(wl);
+  for(let v=0;v<=ymax;v+=500){svg.appendChild(el('line',{x1:L,x2:W-R,y1:y(v),y2:y(v),class:'grid'}));
+    const t=el('text',{x:L-8,y:y(v)+4,class:'tick','text-anchor':'end'});t.textContent='$'+v.toLocaleString();svg.appendChild(t);}
+  d.days.forEach((lb,i)=>{if(i%2)return;const t=el('text',{x:x(i),y:H-10,class:'tick','text-anchor':'middle'});t.textContent=lb;svg.appendChild(t);});
+  const step=a=>{let s='';a.forEach((v,i)=>{s+=(i?`H${x(i).toFixed(1)}V${y(v).toFixed(1)}`:`M${x(0).toFixed(1)} ${y(v).toFixed(1)}`);});return s;};
+  svg.appendChild(el('path',{d:step(d.actual),class:'line s2'}));
+  svg.appendChild(el('path',{d:step(d.billed),class:'line s1'}));
+  [['billed','s1','As billed (ledger)'],['actual','s2','As received (bank)']].forEach(([k,c,t])=>{
+    const v=d[k][n-1], lab=el('text',{x:x(n-1)+8,y:y(v)+(k==='billed'?-6:14),class:'lbl'});lab.textContent=t;svg.appendChild(lab);});
+  const cross=el('line',{y1:T,y2:H-B,class:'cross',visibility:'hidden'});svg.appendChild(cross);
+  const d1=el('circle',{r:4,class:'dot s1',visibility:'hidden'}),d2=el('circle',{r:4,class:'dot s2',visibility:'hidden'});svg.appendChild(d2);svg.appendChild(d1);
+  const hit=el('rect',{x:L,y:T,width:W-L-R,height:H-T-B,fill:'transparent'});svg.appendChild(hit);
+  const tip=document.createElement('div');tip.className='tip';tip.hidden=true;host.appendChild(svg);host.appendChild(tip);
+  const f=v=>'$'+v.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+  hit.addEventListener('pointermove',ev=>{const pt=svg.createSVGPoint();pt.x=ev.clientX;pt.y=ev.clientY;
+    const p=pt.matrixTransform(svg.getScreenCTM().inverse());const i=Math.max(0,Math.min(n-1,Math.round((p.x-L)/(W-L-R)*(n-1))));
+    cross.setAttribute('x1',x(i));cross.setAttribute('x2',x(i));cross.setAttribute('visibility','visible');
+    d1.setAttribute('cx',x(i));d1.setAttribute('cy',y(d.billed[i]));d1.setAttribute('visibility','visible');
+    d2.setAttribute('cx',x(i));d2.setAttribute('cy',y(d.actual[i]));d2.setAttribute('visibility','visible');
+    const inw=i>=d.window[0]&&i<d.window[1];
+    tip.innerHTML=`<b>${d.days[i]}</b>${inw?' <span class="muted">(interest accrues)</span>':''}<br><span class="sw s2" style="background:var(--s2)"></span>As billed ${f(d.billed[i])}<br><span class="sw s1"></span>As received ${f(d.actual[i])}`;
+    tip.hidden=false;const hb=host.getBoundingClientRect(),sx=hb.width/W;let left=x(i)*sx+12;if(left>hb.width-200)left=x(i)*sx-210;tip.style.left=left+'px';tip.style.top='8px';});
+  hit.addEventListener('pointerleave',()=>{tip.hidden=true;[cross,d1,d2].forEach(e=>e.setAttribute('visibility','hidden'));});
+})();
+</script>
+</body></html>

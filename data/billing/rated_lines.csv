@@ -1,0 +1,67 @@
+engine,run,run_date,service_from,service_to,source_version,meter_id,charge_code,key,quality,quantity,unit,rate,rate_id,rate_effective_from,rate_effective_to,amount
+production,Nov initial (as billed),2026-12-01,2026-11-01,2026-11-30,initial,M1,CUSTOMER,COMMERCIAL,actual,1.0,month,45.0,CUST-COM-1,2026-01-01,,45.0
+production,Nov initial (as billed),2026-12-01,2026-11-01,2026-11-30,initial,M1,ENERGY_OFF,ALL,actual,5779.376,kWh,0.07,EOFF-1,2026-01-01,,404.56
+production,Nov initial (as billed),2026-12-01,2026-11-01,2026-11-30,initial,M1,ENERGY_OFF,ALL,estimated,111.024,kWh,0.07,EOFF-1,2026-01-01,,7.77
+production,Nov initial (as billed),2026-12-01,2026-11-01,2026-11-30,initial,M1,ENERGY_ON,ALL,actual,10253.138,kWh,0.12,EON-1,2026-01-01,2026-11-30,1230.38
+production,Nov initial (as billed),2026-12-01,2026-11-01,2026-11-30,initial,M1,ENERGY_ON,ALL,estimated,32.376,kWh,0.12,EON-1,2026-01-01,2026-11-30,3.89
+production,Nov initial (as billed),2026-12-01,2026-11-01,2026-11-30,initial,M1,DELIVERY,LZ_NORTH,actual,16032.514,kWh,0.031,DEL-NORTH-1,2026-01-01,,497.01
+production,Nov initial (as billed),2026-12-01,2026-11-01,2026-11-30,initial,M1,DELIVERY,LZ_NORTH,estimated,143.4,kWh,0.031,DEL-NORTH-1,2026-01-01,,4.45
+production,Nov initial (as billed),2026-12-01,2026-11-01,2026-11-30,initial,M2,CUSTOMER,RESIDENTIAL,actual,1.0,month,10.0,CUST-RES-1,2026-01-01,,10.0
+production,Nov initial (as billed),2026-12-01,2026-11-01,2026-11-30,initial,M2,ENERGY_OFF,ALL,actual,512.972,kWh,0.07,EOFF-1,2026-01-01,,35.91
+production,Nov initial (as billed),2026-12-01,2026-11-01,2026-11-30,initial,M2,ENERGY_OFF,ALL,estimated,4.93,kWh,0.07,EOFF-1,2026-01-01,,0.35
+production,Nov initial (as billed),2026-12-01,2026-11-01,2026-11-30,initial,M2,ENERGY_ON,ALL,actual,267.713,kWh,0.12,EON-1,2026-01-01,2026-11-30,32.13
+production,Nov initial (as billed),2026-12-01,2026-11-01,2026-11-30,initial,M2,ENERGY_ON,ALL,estimated,1.442,kWh,0.12,EON-1,2026-01-01,2026-11-30,0.17
+production,Nov initial (as billed),2026-12-01,2026-11-01,2026-11-30,initial,M2,DELIVERY,LZ_NORTH,actual,780.685,kWh,0.031,DEL-NORTH-1,2026-01-01,,24.2
+production,Nov initial (as billed),2026-12-01,2026-11-01,2026-11-30,initial,M2,DELIVERY,LZ_NORTH,estimated,6.372,kWh,0.031,DEL-NORTH-1,2026-01-01,,0.2
+production,Nov initial (as billed),2026-12-01,2026-11-01,2026-11-30,initial,M3,CUSTOMER,INDUSTRIAL,actual,1.0,month,250.0,CUST-IND-1,2026-01-01,,250.0
+production,Nov initial (as billed),2026-12-01,2026-11-01,2026-11-30,initial,M3,ENERGY_OFF,ALL,actual,9466.336,kWh,0.07,EOFF-1,2026-01-01,,662.64
+production,Nov initial (as billed),2026-12-01,2026-11-01,2026-11-30,initial,M3,ENERGY_OFF,ALL,estimated,102.005,kWh,0.07,EOFF-1,2026-01-01,,7.14
+production,Nov initial (as billed),2026-12-01,2026-11-01,2026-11-30,initial,M3,ENERGY_ON,ALL,actual,6019.837,kWh,0.12,EON-1,2026-01-01,2026-11-30,722.38
+production,Nov initial (as billed),2026-12-01,2026-11-01,2026-11-30,initial,M3,ENERGY_ON,ALL,estimated,23.923,kWh,0.12,EON-1,2026-01-01,2026-11-30,2.87
+production,Nov initial (as billed),2026-12-01,2026-11-01,2026-11-30,initial,M3,DELIVERY,LZ_WEST,actual,15486.173,kWh,0.044,DEL-WEST-1,2026-01-01,,681.39
+production,Nov initial (as billed),2026-12-01,2026-11-01,2026-11-30,initial,M3,DELIVERY,LZ_WEST,estimated,125.928,kWh,0.044,DEL-WEST-1,2026-01-01,,5.54
+production,Nov initial (corrected),2026-12-01,2026-11-01,2026-11-30,initial,M1,CUSTOMER,COMMERCIAL,actual,1.0,month,45.0,CUST-COM-1,2026-01-01,,45.0
+production,Nov initial (corrected),2026-12-01,2026-11-01,2026-11-30,initial,M1,ENERGY_OFF,ALL,actual,5779.376,kWh,0.07,EOFF-1,2026-01-01,,404.56
+production,Nov initial (corrected),2026-12-01,2026-11-01,2026-11-30,initial,M1,ENERGY_OFF,ALL,estimated,111.024,kWh,0.07,EOFF-1,2026-01-01,,7.77
+production,Nov initial (corrected),2026-12-01,2026-11-01,2026-11-30,initial,M1,ENERGY_ON,ALL,actual,10253.138,kWh,0.12,EON-1,2026-01-01,2026-11-30,1230.38
+production,Nov initial (corrected),2026-12-01,2026-11-01,2026-11-30,initial,M1,ENERGY_ON,ALL,estimated,32.376,kWh,0.12,EON-1,2026-01-01,2026-11-30,3.89
+production,Nov initial (corrected),2026-12-01,2026-11-01,2026-11-30,initial,M1,DELIVERY,LZ_NORTH,actual,16032.514,kWh,0.031,DEL-NORTH-1,2026-01-01,,497.01
+production,Nov initial (corrected),2026-12-01,2026-11-01,2026-11-30,initial,M1,DELIVERY,LZ_NORTH,estimated,143.4,kWh,0.031,DEL-NORTH-1,2026-01-01,,4.45
+production,Nov initial (corrected),2026-12-01,2026-11-01,2026-11-30,initial,M2,CUSTOMER,RESIDENTIAL,actual,1.0,month,10.0,CUST-RES-1,2026-01-01,,10.0
+production,Nov initial (corrected),2026-12-01,2026-11-01,2026-11-30,initial,M2,ENERGY_OFF,ALL,actual,512.972,kWh,0.07,EOFF-1,2026-01-01,,35.91
+production,Nov initial (corrected),2026-12-01,2026-11-01,2026-11-30,initial,M2,ENERGY_OFF,ALL,estimated,4.93,kWh,0.07,EOFF-1,2026-01-01,,0.35
+production,Nov initial (corrected),2026-12-01,2026-11-01,2026-11-30,initial,M2,ENERGY_ON,ALL,actual,267.713,kWh,0.12,EON-1,2026-01-01,2026-11-30,32.13
+production,Nov initial (corrected),2026-12-01,2026-11-01,2026-11-30,initial,M2,ENERGY_ON,ALL,estimated,1.442,kWh,0.12,EON-1,2026-01-01,2026-11-30,0.17
+production,Nov initial (corrected),2026-12-01,2026-11-01,2026-11-30,initial,M2,DELIVERY,LZ_NORTH,actual,780.685,kWh,0.031,DEL-NORTH-1,2026-01-01,,24.2
+production,Nov initial (corrected),2026-12-01,2026-11-01,2026-11-30,initial,M2,DELIVERY,LZ_NORTH,estimated,6.372,kWh,0.031,DEL-NORTH-1,2026-01-01,,0.2
+production,Nov initial (corrected),2026-12-01,2026-11-01,2026-11-30,initial,M3,CUSTOMER,INDUSTRIAL,actual,1.0,month,250.0,CUST-IND-1,2026-01-01,,250.0
+production,Nov initial (corrected),2026-12-01,2026-11-01,2026-11-30,initial,M3,ENERGY_OFF,ALL,actual,9466.336,kWh,0.07,EOFF-1,2026-01-01,,662.64
+production,Nov initial (corrected),2026-12-01,2026-11-01,2026-11-30,initial,M3,ENERGY_OFF,ALL,estimated,102.005,kWh,0.07,EOFF-1,2026-01-01,,7.14
+production,Nov initial (corrected),2026-12-01,2026-11-01,2026-11-30,initial,M3,ENERGY_ON,ALL,actual,6019.837,kWh,0.12,EON-1,2026-01-01,2026-11-30,722.38
+production,Nov initial (corrected),2026-12-01,2026-11-01,2026-11-30,initial,M3,ENERGY_ON,ALL,estimated,23.923,kWh,0.12,EON-1,2026-01-01,2026-11-30,2.87
+production,Nov initial (corrected),2026-12-01,2026-11-01,2026-11-30,initial,M3,DELIVERY,LZ_HOUSTON,actual,15486.173,kWh,0.036,DEL-HOUSTON-1,2026-01-01,,557.5
+production,Nov initial (corrected),2026-12-01,2026-11-01,2026-11-30,initial,M3,DELIVERY,LZ_HOUSTON,estimated,125.928,kWh,0.036,DEL-HOUSTON-1,2026-01-01,,4.53
+production,Nov final (corrected),2026-12-10,2026-11-01,2026-11-30,final,M1,CUSTOMER,COMMERCIAL,actual,1.0,month,45.0,CUST-COM-1,2026-01-01,,45.0
+production,Nov final (corrected),2026-12-10,2026-11-01,2026-11-30,final,M1,ENERGY_OFF,ALL,actual,5839.309,kWh,0.07,EOFF-1,2026-01-01,,408.75
+production,Nov final (corrected),2026-12-10,2026-11-01,2026-11-30,final,M1,ENERGY_ON,ALL,actual,10272.746,kWh,0.12,EON-1,2026-01-01,2026-11-30,1232.73
+production,Nov final (corrected),2026-12-10,2026-11-01,2026-11-30,final,M1,DELIVERY,LZ_NORTH,actual,16112.055,kWh,0.031,DEL-NORTH-1,2026-01-01,,499.47
+production,Nov final (corrected),2026-12-10,2026-11-01,2026-11-30,final,M2,CUSTOMER,RESIDENTIAL,actual,1.0,month,10.0,CUST-RES-1,2026-01-01,,10.0
+production,Nov final (corrected),2026-12-10,2026-11-01,2026-11-30,final,M2,ENERGY_OFF,ALL,actual,516.452,kWh,0.07,EOFF-1,2026-01-01,,36.15
+production,Nov final (corrected),2026-12-10,2026-11-01,2026-11-30,final,M2,ENERGY_ON,ALL,actual,269.27,kWh,0.12,EON-1,2026-01-01,2026-11-30,32.31
+production,Nov final (corrected),2026-12-10,2026-11-01,2026-11-30,final,M2,DELIVERY,LZ_NORTH,actual,785.722,kWh,0.031,DEL-NORTH-1,2026-01-01,,24.36
+production,Nov final (corrected),2026-12-10,2026-11-01,2026-11-30,final,M3,CUSTOMER,INDUSTRIAL,actual,1.0,month,250.0,CUST-IND-1,2026-01-01,,250.0
+production,Nov final (corrected),2026-12-10,2026-11-01,2026-11-30,final,M3,ENERGY_OFF,ALL,actual,9557.833,kWh,0.07,EOFF-1,2026-01-01,,669.05
+production,Nov final (corrected),2026-12-10,2026-11-01,2026-11-30,final,M3,ENERGY_ON,ALL,actual,6043.684,kWh,0.12,EON-1,2026-01-01,2026-11-30,725.24
+production,Nov final (corrected),2026-12-10,2026-11-01,2026-11-30,final,M3,DELIVERY,LZ_HOUSTON,actual,15601.517,kWh,0.036,DEL-HOUSTON-1,2026-01-01,,561.65
+production,Dec initial,2027-01-01,2026-12-01,2026-12-31,initial,M1,CUSTOMER,COMMERCIAL,actual,1.0,month,45.0,CUST-COM-1,2026-01-01,,45.0
+production,Dec initial,2027-01-01,2026-12-01,2026-12-31,initial,M1,ENERGY_OFF,ALL,actual,5814.645,kWh,0.07,EOFF-1,2026-01-01,,407.03
+production,Dec initial,2027-01-01,2026-12-01,2026-12-31,initial,M1,ENERGY_ON,ALL,actual,11293.527,kWh,0.13,EON-2,2026-12-01,,1468.16
+production,Dec initial,2027-01-01,2026-12-01,2026-12-31,initial,M1,DELIVERY,LZ_NORTH,actual,17108.172,kWh,0.031,DEL-NORTH-1,2026-01-01,,530.35
+production,Dec initial,2027-01-01,2026-12-01,2026-12-31,initial,M2,CUSTOMER,RESIDENTIAL,actual,1.0,month,10.0,CUST-RES-1,2026-01-01,,10.0
+production,Dec initial,2027-01-01,2026-12-01,2026-12-31,initial,M2,ENERGY_OFF,ALL,actual,514.641,kWh,0.07,EOFF-1,2026-01-01,,36.02
+production,Dec initial,2027-01-01,2026-12-01,2026-12-31,initial,M2,ENERGY_ON,ALL,actual,294.14,kWh,0.13,EON-2,2026-12-01,,38.24
+production,Dec initial,2027-01-01,2026-12-01,2026-12-31,initial,M2,DELIVERY,LZ_NORTH,actual,808.781,kWh,0.031,DEL-NORTH-1,2026-01-01,,25.07
+production,Dec initial,2027-01-01,2026-12-01,2026-12-31,initial,M3,CUSTOMER,INDUSTRIAL,actual,1.0,month,250.0,CUST-IND-1,2026-01-01,,250.0
+production,Dec initial,2027-01-01,2026-12-01,2026-12-31,initial,M3,ENERGY_OFF,ALL,actual,9502.37,kWh,0.07,EOFF-1,2026-01-01,,665.17
+production,Dec initial,2027-01-01,2026-12-01,2026-12-31,initial,M3,ENERGY_ON,ALL,actual,6629.884,kWh,0.13,EON-2,2026-12-01,,861.88
+production,Dec initial,2027-01-01,2026-12-01,2026-12-31,initial,M3,DELIVERY,LZ_HOUSTON,actual,16132.254,kWh,0.036,DEL-HOUSTON-1,2026-01-01,,580.76

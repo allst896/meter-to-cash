@@ -1,0 +1,4 @@
+account_id,payment_date,amount,reference,entered_on,entered_by
+A-1001,2026-12-28,1300.0,ACH-20261218-0417,2026-12-18,jlopez
+A-1003,2026-12-20,2331.96,ACH-20261220-0552,2026-12-20,jlopez
+A-1002,2026-12-29,102.96,CHK-20261229-1188,2026-12-29,mchen

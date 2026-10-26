@@ -1,0 +1,4 @@
+account_id,lines_total,amount_due,ties,prior_matches_dec1,payments_match_ledger,billed_interest,recalculated,difference,matches,reference,payment_date,received_date,date_matches
+A-1001,3340.41,3340.41,True,True,True,3.92,2.64,1.28,False,ACH-20261218-0417,2026-12-28,2026-12-18,False
+A-1002,109.34,109.34,True,True,True,0.15,0.15,0.0,True,CHK-20261229-1188,2026-12-29,2026-12-29,True
+A-1003,2231.79,2231.79,True,True,True,0.0,0.0,0.0,True,ACH-20261220-0552,2026-12-20,2026-12-20,True
