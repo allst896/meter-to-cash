@@ -1,0 +1,18 @@
+check,engine,run,meter_id,charge_code,finding,amount
+Volume conservation,new,Oct final,M2,DELIVERY,811.611 kWh unpriced; zone key 'NORTH' not in rate table (closest 'LZ_NORTH'),
+Volume conservation,new,Nov initial,M2,DELIVERY,787.057 kWh unpriced; zone key 'NORTH' not in rate table (closest 'LZ_NORTH'),
+Volume conservation,new,Nov final,M2,DELIVERY,785.722 kWh unpriced; zone key 'NORTH' not in rate table (closest 'LZ_NORTH'),
+Delta from normal,old,Nov final,M3,DELIVERY,"Usage normal, price per kWh not: check grouping and category setup (key changed LZ_HOUSTON → LZ_WEST)",
+System comparison,new,Oct final,M2,DELIVERY,Missing in new engine,-25.16
+System comparison,new,Nov initial,M2,DELIVERY,Missing in new engine,-24.2
+System comparison,new,Nov initial,M2,DELIVERY,Missing in new engine,-0.2
+System comparison,new,Nov final,M2,DELIVERY,Missing in new engine,-24.36
+Effective-date check,new,Nov initial,M1,ENERGY_ON,"Rate differs: new used EON-2, EON-1 effective for service period; old engine correct",102.53
+Effective-date check,new,Nov initial,M1,ENERGY_ON,"Rate differs: new used EON-2, EON-1 effective for service period; old engine correct",0.32
+Effective-date check,new,Nov initial,M2,ENERGY_ON,"Rate differs: new used EON-2, EON-1 effective for service period; old engine correct",2.67
+Effective-date check,new,Nov initial,M2,ENERGY_ON,"Rate differs: new used EON-2, EON-1 effective for service period; old engine correct",0.02
+Effective-date check,new,Nov initial,M3,ENERGY_ON,"Rate differs: new used EON-2, EON-1 effective for service period; old engine correct",60.2
+Effective-date check,new,Nov initial,M3,ENERGY_ON,"Rate differs: new used EON-2, EON-1 effective for service period; old engine correct",0.24
+Effective-date check,new,Nov final,M1,ENERGY_ON,"Rate differs: new used EON-2, EON-1 effective for service period; old engine correct",102.73
+Effective-date check,new,Nov final,M2,ENERGY_ON,"Rate differs: new used EON-2, EON-1 effective for service period; old engine correct",2.7
+Effective-date check,new,Nov final,M3,ENERGY_ON,"Rate differs: new used EON-2, EON-1 effective for service period; old engine correct",60.44

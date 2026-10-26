@@ -279,6 +279,7 @@ def render(r, seed):
 <style>{CSS}</style></head><body><main>
 
 <header>
+<nav class="stagenav" aria-label="Stages"><span>1 Metering</span><a href="rating_report.html">2 Rating</a></nav>
 <p class="kicker">Meter-to-cash demo · Stage 1 of 5: Metering</p>
 <h1>Which feed is wrong, and why</h1>
 <p class="lede">Two feeds report the same three meters for November 2026. Source B passes a month-level count
@@ -372,6 +373,8 @@ CSS = """
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "IBM Plex Sans",system-ui,sans-serif;font-variant-numeric:tabular-nums}
 main{max-width:1040px;margin:0 auto;padding:48px 16px 64px}
 .kicker{color:var(--muted);margin:0 0 6px;font-weight:500}
+.stagenav{display:flex;gap:18px;font-size:.92rem;margin:0 0 6px}
+.stagenav a{color:var(--ink2)}.stagenav span{color:var(--ink);font-weight:500}
 h1{font-size:clamp(1.9rem,4.5vw,2.8rem);line-height:1.12;margin:0 0 16px;font-weight:600;letter-spacing:-.015em}
 .lede{font-size:1.15rem;max-width:66ch;margin:0;color:var(--ink2)}
 .lede strong{color:var(--ink)}

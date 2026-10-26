@@ -1,0 +1,5 @@
+meter_id,category,zone,effective_from,effective_to,change_note
+M1,COMMERCIAL,LZ_NORTH,2024-03-01,,New service (migrated)
+M2,RESIDENTIAL,NORTH,2025-06-15,,New service (migrated)
+M3,INDUSTRIAL,LZ_HOUSTON,2023-09-01,2026-10-31,New service (migrated)
+M3,INDUSTRIAL,LZ_WEST,2026-11-01,,Account update: service upgrade (migrated)
