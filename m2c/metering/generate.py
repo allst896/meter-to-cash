@@ -44,8 +44,10 @@ def _kw(profile, local_start, rng):
             kw += 0.9
         if 17 <= h < 22:
             kw += 1.9
-    else:  # industrial, two shifts
+    else:  # industrial: two shifts, plus a weekday overnight furnace run 02:00-06:00
         kw = 24 if 6 <= h < 22 else 17
+        if weekday and 2 <= h < 6:
+            kw = 50
     return kw * rng.normal(1.0, 0.05)
 
 

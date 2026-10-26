@@ -263,6 +263,11 @@ def render(r, seed):
                      "Initial month total", "Final month total", "True-up (kWh)"],
                     est_rows, num=(1, 2, 3, 4, 5, 6))
     big = min(meters, key=lambda m: s.loc[m, "true_up_kwh"])
+    under = [m for m in meters if s.loc[m, "true_up_kwh"] > 0]
+    under_note = "".join(
+        f" For {esc(m)}, an overnight production run sits inside the gap; the straight line can't see a peak it has no"
+        f" readings for, so it underestimates and the true-up is a charge of {kwh(s.loc[m, 'true_up_kwh'], 1)} kWh."
+        for m in under)
 
     charts = "".join(f'<figure class="gapfig"><figcaption>{esc(d["meter"])}</figcaption>'
                      f'<div class="gapchart"></div></figure>' for d in cdata)
@@ -279,7 +284,7 @@ def render(r, seed):
 <style>{CSS}</style></head><body><main>
 
 <header>
-<nav class="stagenav" aria-label="Stages"><span>1 Metering</span><a href="rating_report.html">2 Rating</a><a href="billing_report.html">3 Billing</a></nav>
+<nav class="stagenav" aria-label="Stages"><span>1 Metering</span><a href="rating_report.html">2 Rating</a><a href="billing_report.html">3 Billing</a><a href="invoicing_report.html">4 Invoicing</a></nav>
 <p class="kicker">Meter-to-cash demo · Stage 1 of 5: Metering</p>
 <h1>Which feed is wrong, and why</h1>
 <p class="lede">Two feeds report the same three meters for November 2026. Source B passes a month-level count
@@ -343,9 +348,9 @@ true-up on the January 1 bill. Both versions are kept.</p>
 <div class="gapcharts">{charts}</div>
 <details><summary>Table view of the estimated intervals</summary>{chart_table}</details>
 {est_tbl}
-<p>Interpolation draws a straight line across the gap. For {esc(big)}, demand ramps up near the end of the outage, so the
-straight line overestimates and the true-up is a credit of {kwh(-s.loc[big,'true_up_kwh'], 1)} kWh. Every final total reconciles
-to the register reads within tolerance.</p></section>
+<p>Interpolation draws a straight line across the gap, and it can be wrong in either direction. For {esc(big)}, demand ramps
+up near the end of the outage, so the straight line overestimates and the true-up is a credit of
+{kwh(-s.loc[big,'true_up_kwh'], 1)} kWh.{under_note} Every final total reconciles to the register reads within tolerance.</p></section>
 
 <section><h2>Handed to rating</h2>
 <ul class="files">

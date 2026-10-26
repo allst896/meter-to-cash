@@ -8,7 +8,7 @@ Each stage plants realistic problems in synthetic data, then finds them with che
 | 1. Metering | Which usage feed is wrong, and why? | Built |
 | 2. Rating | Is every unit priced, in the right category, at the right rate? | Built |
 | 3. Billing | Does the statement roll forward, and is the interest right? | Built |
-| 4. Invoicing | Can the customer check the invoice themselves? | Spec |
+| 4. Invoicing | Can the customer check the invoice themselves? | Built |
 | 5. Collection | Does each payment equal its invoice, and if not, why? | Spec |
 
 ## Stage 1: Metering
@@ -62,6 +62,22 @@ right, so the statement rolls forward and nothing looks wrong, but the interest 
 The four checks: balance roll-forward, an independent interest recalculation from the bank remittance,
 interest by balance period (which puts the difference on Dec 28), and ledger against bank remittance.
 
+## Stage 4: Invoicing
+
+Six sample invoices as PDF from a fictional utility: the December 1 invoices (billed on estimated usage,
+with a disclosure of actual vs estimated kWh) and the January 1 invoices built from the corrected statements.
+Every invoice prints enough for the customer to recompute it: quantities, rates, interest periods, and billed
+vs actual amounts behind each credit and true-up.
+
+Planted issues, both from how the invoicing system builds the page, not from wrong numbers:
+
+- **Mislabeled line:** the commercial template maps the November true-up into current charges as "Energy"
+- **Missing reference:** the true-up's original-invoice lookup only searches ISSUED invoices; the zone credit
+  marked A-1003's December invoice ADJUSTED, so its true-up prints as a bare "Adjustment"
+
+The five checks: statement-to-invoice tie-out (passes on every invoice), classification, required fields
+and disclosures, adjustment references, and a customer-view recompute using only what is printed.
+
 ## Run it
 
 ```
@@ -69,18 +85,22 @@ pip install -r requirements.txt
 python run_metering.py          # writes data/ and output/
 python run_rating.py            # reads output/interval_usage.csv
 python run_billing.py           # reads metering and rating outputs
+python run_invoicing.py         # reads billing outputs; writes PDFs to output/invoices/
 python -m pytest -q             # the spec's numbers as tests, across three random months
 ```
 
 Outputs:
 
-- `output/metering_report.html`, `output/rating_report.html`, `output/billing_report.html` — the walkthroughs
+- `output/metering_report.html`, `output/rating_report.html`, `output/billing_report.html`, `output/invoicing_report.html` — the walkthroughs
 - `output/interval_usage.csv` — every interval per meter and version, with UTC end time, local label, offset and quality flag
 - `output/validation_summary.csv` — metering counts and variances per meter
 - `output/rated_charges.csv` — every rated line from both engines and all runs
 - `output/rating_exceptions.csv` — the rating findings
 - `output/statements.csv` — January 1 statement lines per account, as billed and corrected
 - `output/billing_checks.csv` — billing check results per account
+- `output/invoices/` — the six sample invoices (PDF, plus PNG previews when `pdftoppm` is installed)
+- `output/invoice_lines.csv` — every printed invoice line, with section, source statement line and references
+- `output/invoicing_checks.csv` — invoicing check results per invoice
 
 ## Layout
 
@@ -97,6 +117,10 @@ m2c/billing/inputs.py        Dec 1 bills, credit, December charges, ledger, bank
 m2c/billing/system.py        the billing system: statements and daily interest
 m2c/billing/checks.py        the four billing checks and the tie-out to rating
 m2c/billing/report.py        HTML report
+m2c/invoicing/system.py      the invoicing system: templates, lines, invoice register
+m2c/invoicing/pdf.py         invoice PDFs
+m2c/invoicing/checks.py      the five invoicing checks
+m2c/invoicing/report.py      HTML report
 tests/                       spec numbers as tests
 ```
 
@@ -106,4 +130,5 @@ Scenarios and diagnostic methods come from real settlement work by Archer Opitz 
 the DST fall-back case was found in production by counting intervals per day against the calendar,
 grouping mistakes by delta-from-normal checks, effective-dating errors by comparing systems during upgrades,
 and fat-fingered payment dates by recalculating interest independently.
+Unexplained invoice adjustments, and the disputes they cause, are drawn from the same work.
 The code was built with AI assistance.

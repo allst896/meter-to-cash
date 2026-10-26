@@ -1,0 +1,7 @@
+invoice_no,account_id,tie_out,classification,required_fields,adjustment_references,customer_recompute
+INV-202612-1001,A-1001,True,True,True,True,True
+INV-202612-1002,A-1002,True,True,True,True,True
+INV-202612-1003,A-1003,True,True,True,True,True
+INV-202701-1001,A-1001,True,False,True,True,False
+INV-202701-1002,A-1002,True,True,True,True,True
+INV-202701-1003,A-1003,True,True,True,False,False

@@ -1,0 +1,62 @@
+invoice_no,block,qty,unit,rate,ref_invoice,ref_period,detail,source,account_id,section,label,amount
+INV-202612-1001,detail,1.0,month,45.0,,,,CURRENT,A-1001,CURRENT,Customer charge,45.0
+INV-202612-1001,detail,10253.138,kWh,0.12,,,,CURRENT,A-1001,CURRENT,"Energy, on-peak",1230.38
+INV-202612-1001,detail,32.376,kWh,0.12,,,,CURRENT,A-1001,CURRENT,"Energy, on-peak, estimated",3.89
+INV-202612-1001,detail,5779.376,kWh,0.07,,,,CURRENT,A-1001,CURRENT,"Energy, off-peak",404.56
+INV-202612-1001,detail,111.024,kWh,0.07,,,,CURRENT,A-1001,CURRENT,"Energy, off-peak, estimated",7.77
+INV-202612-1001,detail,16032.514,kWh,0.031,,,,CURRENT,A-1001,CURRENT,Delivery (LZ_NORTH),497.01
+INV-202612-1001,detail,143.4,kWh,0.031,,,,CURRENT,A-1001,CURRENT,"Delivery (LZ_NORTH), estimated",4.45
+INV-202612-1001,summary,,,,,,,,A-1001,CURRENT,"Current charges, November",2193.06
+INV-202612-1002,detail,1.0,month,10.0,,,,CURRENT,A-1002,CURRENT,Customer charge,10.0
+INV-202612-1002,detail,267.713,kWh,0.12,,,,CURRENT,A-1002,CURRENT,"Energy, on-peak",32.13
+INV-202612-1002,detail,1.442,kWh,0.12,,,,CURRENT,A-1002,CURRENT,"Energy, on-peak, estimated",0.17
+INV-202612-1002,detail,512.972,kWh,0.07,,,,CURRENT,A-1002,CURRENT,"Energy, off-peak",35.91
+INV-202612-1002,detail,4.93,kWh,0.07,,,,CURRENT,A-1002,CURRENT,"Energy, off-peak, estimated",0.35
+INV-202612-1002,detail,780.685,kWh,0.031,,,,CURRENT,A-1002,CURRENT,Delivery (LZ_NORTH),24.2
+INV-202612-1002,detail,6.372,kWh,0.031,,,,CURRENT,A-1002,CURRENT,"Delivery (LZ_NORTH), estimated",0.2
+INV-202612-1002,summary,,,,,,,,A-1002,CURRENT,"Current charges, November",102.96
+INV-202612-1003,detail,1.0,month,250.0,,,,CURRENT,A-1003,CURRENT,Customer charge,250.0
+INV-202612-1003,detail,6019.837,kWh,0.12,,,,CURRENT,A-1003,CURRENT,"Energy, on-peak",722.38
+INV-202612-1003,detail,23.923,kWh,0.12,,,,CURRENT,A-1003,CURRENT,"Energy, on-peak, estimated",2.87
+INV-202612-1003,detail,12112.176,kWh,0.07,,,,CURRENT,A-1003,CURRENT,"Energy, off-peak",847.85
+INV-202612-1003,detail,102.005,kWh,0.07,,,,CURRENT,A-1003,CURRENT,"Energy, off-peak, estimated",7.14
+INV-202612-1003,detail,18132.013,kWh,0.044,,,,CURRENT,A-1003,CURRENT,Delivery (LZ_WEST),797.81
+INV-202612-1003,detail,125.928,kWh,0.044,,,,CURRENT,A-1003,CURRENT,"Delivery (LZ_WEST), estimated",5.54
+INV-202612-1003,summary,,,,,,,,A-1003,CURRENT,"Current charges, November",2633.59
+INV-202701-1001,summary,,,,,,,PRIOR,A-1001,PRIOR,Prior balance (Dec 1 invoice),2193.06
+INV-202701-1001,detail,,,,,,,PAYMENT,A-1001,PAYMENT,Payment received 2026-12-18 (ACH-20261218-0417),-1300.0
+INV-202701-1001,detail,,,,,,"[{""from"": ""2026-12-26"", ""to"": ""2027-01-01"", ""balance"": 893.06, ""days"": 6}]",INTEREST,A-1001,INTEREST,"Interest, 18% a year after a 5-day grace period",2.64
+INV-202701-1001,detail,1.0,month,45.0,,,,CURRENT,A-1001,CURRENT,Customer charge,45.0
+INV-202701-1001,detail,11293.527,kWh,0.13,,,,CURRENT,A-1001,CURRENT,"Energy, on-peak",1468.16
+INV-202701-1001,detail,5814.645,kWh,0.07,,,,CURRENT,A-1001,CURRENT,"Energy, off-peak",407.03
+INV-202701-1001,detail,17108.172,kWh,0.031,,,,CURRENT,A-1001,CURRENT,Delivery (LZ_NORTH),530.35
+INV-202701-1001,detail,,,,,,,TRUE_UP,A-1001,CURRENT,Energy,-7.11
+INV-202701-1001,summary,,,,,,,,A-1001,PAYMENT,Payments received,-1300.0
+INV-202701-1001,summary,,,,,,,,A-1001,INTEREST,Interest,2.64
+INV-202701-1001,summary,,,,,,,,A-1001,CURRENT,"Current charges, December",2443.43
+INV-202701-1002,summary,,,,,,,PRIOR,A-1002,PRIOR,Prior balance (Dec 1 invoice),102.96
+INV-202701-1002,detail,,,,,,,PAYMENT,A-1002,PAYMENT,Payment received 2026-12-29 (CHK-20261229-1188),-102.96
+INV-202701-1002,detail,,,,,,"[{""from"": ""2026-12-26"", ""to"": ""2026-12-29"", ""balance"": 102.96, ""days"": 3}]",INTEREST,A-1002,INTEREST,"Interest, 18% a year after a 5-day grace period",0.15
+INV-202701-1002,detail,1.0,month,10.0,,,,CURRENT,A-1002,CURRENT,Customer charge,10.0
+INV-202701-1002,detail,294.14,kWh,0.13,,,,CURRENT,A-1002,CURRENT,"Energy, on-peak",38.24
+INV-202701-1002,detail,514.641,kWh,0.07,,,,CURRENT,A-1002,CURRENT,"Energy, off-peak",36.02
+INV-202701-1002,detail,808.781,kWh,0.031,,,,CURRENT,A-1002,CURRENT,Delivery (LZ_NORTH),25.07
+INV-202701-1002,detail,,,,INV-202612-1002,"Nov 1–30, 2026","[{""what"": ""Energy, on-peak"", ""rate"": 0.12, ""billed_qty"": 269.155, ""billed_amount"": 32.3, ""actual_qty"": 269.27, ""actual_amount"": 32.31, ""amount"": 0.01}, {""what"": ""Energy, off-peak"", ""rate"": 0.07, ""billed_qty"": 517.902, ""billed_amount"": 36.26, ""actual_qty"": 516.452, ""actual_amount"": 36.15, ""amount"": -0.11}, {""what"": ""Delivery"", ""rate"": 0.031, ""billed_qty"": 787.057, ""billed_amount"": 24.4, ""actual_qty"": 785.722, ""actual_amount"": 24.36, ""amount"": -0.04}]",TRUE_UP,A-1002,ADJUSTMENT,"Prior-period adjustment: November service, true-up of estimated usage",-0.14
+INV-202701-1002,summary,,,,,,,,A-1002,PAYMENT,Payments received,-102.96
+INV-202701-1002,summary,,,,,,,,A-1002,INTEREST,Interest,0.15
+INV-202701-1002,summary,,,,,,,,A-1002,CURRENT,"Current charges, December",109.33
+INV-202701-1002,summary,,,,,,,,A-1002,ADJUSTMENT,Prior-period adjustments,-0.14
+INV-202701-1003,summary,,,,,,,PRIOR,A-1003,PRIOR,Prior balance (Dec 1 invoice),2633.59
+INV-202701-1003,detail,,,,,,,PAYMENT,A-1003,PAYMENT,Payment received 2026-12-20 (ACH-20261220-0552),-2633.59
+INV-202701-1003,detail,,,,INV-202612-1003,"Nov 1–30, 2026","[{""what"": ""November delivery"", ""qty"": 18257.941, ""rate_billed"": 0.044, ""billed_amount"": 803.35, ""rate_correct"": 0.036, ""correct_amount"": 657.28}]",CREDIT,A-1003,CREDIT,"Credit CR-0003: Delivery zone corrected LZ_WEST to LZ_HOUSTON, November service",-146.07
+INV-202701-1003,detail,,,,,,,INTEREST,A-1003,INTEREST,"Interest, 18% a year after a 5-day grace period",0.0
+INV-202701-1003,detail,1.0,month,250.0,,,,CURRENT,A-1003,CURRENT,Customer charge,250.0
+INV-202701-1003,detail,6629.884,kWh,0.13,,,,CURRENT,A-1003,CURRENT,"Energy, on-peak",861.88
+INV-202701-1003,detail,12537.453,kWh,0.07,,,,CURRENT,A-1003,CURRENT,"Energy, off-peak",877.62
+INV-202701-1003,detail,19167.337,kWh,0.036,,,,CURRENT,A-1003,CURRENT,Delivery (LZ_HOUSTON),690.02
+INV-202701-1003,detail,,,,,,,TRUE_UP,A-1003,ADJUSTMENT,Adjustment,12.97
+INV-202701-1003,summary,,,,,,,,A-1003,PAYMENT,Payments received,-2633.59
+INV-202701-1003,summary,,,,,,,,A-1003,CREDIT,Credits,-146.07
+INV-202701-1003,summary,,,,,,,,A-1003,INTEREST,Interest,0.0
+INV-202701-1003,summary,,,,,,,,A-1003,CURRENT,"Current charges, December",2679.52
+INV-202701-1003,summary,,,,,,,,A-1003,ADJUSTMENT,Prior-period adjustments,12.97

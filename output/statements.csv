@@ -11,13 +11,13 @@ as billed,A-1002,M2,2027-01-01,3,INTEREST,Interest at 18%/yr after 5-day grace,,
 as billed,A-1002,M2,2027-01-01,4,CURRENT,"Current charges, December service",,109.33
 as billed,A-1002,M2,2027-01-01,5,TRUE_UP,"True-up, November service (prior-period adjustment)",,-0.14
 as billed,A-1002,M2,2027-01-01,6,AMOUNT_DUE,Amount due by 2027-01-21,,109.34
-as billed,A-1003,M3,2027-01-01,1,PRIOR,Prior balance (Dec 1 statement),,2331.96
-as billed,A-1003,M3,2027-01-01,2,PAYMENT,Payment received 2026-12-20 (ACH-20261220-0552),2026-12-20,-2331.96
-as billed,A-1003,M3,2027-01-01,3,CREDIT,"Credit CR-0003: Delivery zone corrected LZ_WEST to LZ_HOUSTON, November service",2026-12-15,-124.9
+as billed,A-1003,M3,2027-01-01,1,PRIOR,Prior balance (Dec 1 statement),,2633.59
+as billed,A-1003,M3,2027-01-01,2,PAYMENT,Payment received 2026-12-20 (ACH-20261220-0552),2026-12-20,-2633.59
+as billed,A-1003,M3,2027-01-01,3,CREDIT,"Credit CR-0003: Delivery zone corrected LZ_WEST to LZ_HOUSTON, November service",2026-12-15,-146.07
 as billed,A-1003,M3,2027-01-01,4,INTEREST,Interest at 18%/yr after 5-day grace,,0.0
-as billed,A-1003,M3,2027-01-01,5,CURRENT,"Current charges, December service",,2357.81
-as billed,A-1003,M3,2027-01-01,6,TRUE_UP,"True-up, November service (prior-period adjustment)",,-1.12
-as billed,A-1003,M3,2027-01-01,7,AMOUNT_DUE,Amount due by 2027-01-21,,2231.79
+as billed,A-1003,M3,2027-01-01,5,CURRENT,"Current charges, December service",,2679.52
+as billed,A-1003,M3,2027-01-01,6,TRUE_UP,"True-up, November service (prior-period adjustment)",,12.97
+as billed,A-1003,M3,2027-01-01,7,AMOUNT_DUE,Amount due by 2027-01-21,,2546.42
 corrected,A-1001,M1,2027-01-01,1,PRIOR,Prior balance (Dec 1 statement),,2193.06
 corrected,A-1001,M1,2027-01-01,2,PAYMENT,Payment received 2026-12-18 (ACH-20261218-0417),2026-12-18,-1300.0
 corrected,A-1001,M1,2027-01-01,3,INTEREST,Interest at 18%/yr after 5-day grace,,2.64
@@ -30,10 +30,10 @@ corrected,A-1002,M2,2027-01-01,3,INTEREST,Interest at 18%/yr after 5-day grace,,
 corrected,A-1002,M2,2027-01-01,4,CURRENT,"Current charges, December service",,109.33
 corrected,A-1002,M2,2027-01-01,5,TRUE_UP,"True-up, November service (prior-period adjustment)",,-0.14
 corrected,A-1002,M2,2027-01-01,6,AMOUNT_DUE,Amount due by 2027-01-21,,109.34
-corrected,A-1003,M3,2027-01-01,1,PRIOR,Prior balance (Dec 1 statement),,2331.96
-corrected,A-1003,M3,2027-01-01,2,PAYMENT,Payment received 2026-12-20 (ACH-20261220-0552),2026-12-20,-2331.96
-corrected,A-1003,M3,2027-01-01,3,CREDIT,"Credit CR-0003: Delivery zone corrected LZ_WEST to LZ_HOUSTON, November service",2026-12-15,-124.9
+corrected,A-1003,M3,2027-01-01,1,PRIOR,Prior balance (Dec 1 statement),,2633.59
+corrected,A-1003,M3,2027-01-01,2,PAYMENT,Payment received 2026-12-20 (ACH-20261220-0552),2026-12-20,-2633.59
+corrected,A-1003,M3,2027-01-01,3,CREDIT,"Credit CR-0003: Delivery zone corrected LZ_WEST to LZ_HOUSTON, November service",2026-12-15,-146.07
 corrected,A-1003,M3,2027-01-01,4,INTEREST,Interest at 18%/yr after 5-day grace,,0.0
-corrected,A-1003,M3,2027-01-01,5,CURRENT,"Current charges, December service",,2357.81
-corrected,A-1003,M3,2027-01-01,6,TRUE_UP,"True-up, November service (prior-period adjustment)",,-1.12
-corrected,A-1003,M3,2027-01-01,7,AMOUNT_DUE,Amount due by 2027-01-21,,2231.79
+corrected,A-1003,M3,2027-01-01,5,CURRENT,"Current charges, December service",,2679.52
+corrected,A-1003,M3,2027-01-01,6,TRUE_UP,"True-up, November service (prior-period adjustment)",,12.97
+corrected,A-1003,M3,2027-01-01,7,AMOUNT_DUE,Amount due by 2027-01-21,,2546.42

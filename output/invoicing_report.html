@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Invoicing Diagnostics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fcfcfb;--ink:#0b0b0b;--ink2:#52514e;--muted:#6f6e69;--rule:#dcdad4;--panel:#f2f1ed;
+--s1:#2a78d6;--s2:#eb6834;--band:#efe9dc;--ok:#1d6b45;--ok-bg:#e1f0e7;--warn:#7a5200;--warn-bg:#f6ead0;--bad:#a3312b;--bad-bg:#f7e4e2}
+@media (prefers-color-scheme:dark){:root:where(:not([data-theme="light"])){--bg:#1a1a19;--ink:#f0efec;--ink2:#c3c2b7;
+--muted:#9c9b92;--rule:#34332f;--panel:#232321;--s1:#3987e5;--s2:#d95926;--band:#2c2a24;--ok:#7cc89c;--ok-bg:#1b3326;--warn:#e3b460;--warn-bg:#33281a;
+--bad:#f08c84;--bad-bg:#3a1d1b}}
+:root[data-theme="dark"]{--bg:#1a1a19;--ink:#f0efec;--ink2:#c3c2b7;--muted:#9c9b92;--rule:#34332f;--panel:#232321;
+--s1:#3987e5;--s2:#d95926;--band:#2c2a24;--ok:#7cc89c;--ok-bg:#1b3326;--warn:#e3b460;--warn-bg:#33281a;--bad:#f08c84;--bad-bg:#3a1d1b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "IBM Plex Sans",system-ui,sans-serif;font-variant-numeric:tabular-nums}
+main{max-width:1040px;margin:0 auto;padding:48px 16px 64px}
+.kicker{color:var(--muted);margin:0 0 6px;font-weight:500}
+.stagenav{display:flex;gap:18px;font-size:.92rem;margin:0 0 6px}
+.stagenav a{color:var(--ink2)}.stagenav span{color:var(--ink);font-weight:500}
+h1{font-size:clamp(1.9rem,4.5vw,2.8rem);line-height:1.12;margin:0 0 16px;font-weight:600;letter-spacing:-.015em}
+.lede{font-size:1.15rem;max-width:66ch;margin:0;color:var(--ink2)}
+.lede strong{color:var(--ink)}
+.steps{display:flex;flex-wrap:wrap;gap:6px 18px;margin:28px 0 40px;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.steps a{color:var(--ink2);text-decoration:none;font-size:.92rem}.steps a:hover{color:var(--ink);text-decoration:underline}
+section{margin:0 0 52px}
+h2{font-size:1.35rem;font-weight:600;margin:0 0 10px;display:flex;align-items:baseline;gap:12px}
+h2 .num{font-family:"IBM Plex Mono",monospace;font-weight:400;font-size:1rem;color:var(--muted)}
+h3{font-size:1.05rem;font-weight:600;margin:28px 0 6px}
+section p{max-width:72ch;color:var(--ink2);margin:0 0 14px}
+.note{font-size:.92rem}
+.scroll{overflow-x:auto;margin:0 0 18px}
+table{border-collapse:collapse;width:100%;font-size:.93rem}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-weight:500;color:var(--ink2);border-bottom:2px solid var(--ink)}
+td.n,th.n{text-align:right}
+.chip{display:inline-block;margin-top:3px;padding:1px 8px;border-radius:4px;font-size:.82rem;font-weight:500;white-space:nowrap}
+.chip.ok{color:var(--ok);background:var(--ok-bg)}.chip.warn{color:var(--warn);background:var(--warn-bg)}.chip.bad{color:var(--bad);background:var(--bad-bg)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 20px;font-size:.9rem;color:var(--ink2);margin:6px 0 10px}
+.sw{display:inline-block;width:14px;height:3px;border-radius:2px;vertical-align:middle;margin-right:6px}
+.sw.s1{background:var(--s1)}.sw.s2{background:repeating-linear-gradient(90deg,var(--s2) 0 5px,transparent 5px 8px)}.sw.band{background:var(--band);height:12px;border:1px solid var(--rule)}
+.gapcharts{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin:0 0 12px}
+.gapfig{margin:0;border:1px solid var(--rule);border-radius:6px;padding:10px 10px 4px;background:var(--bg)}
+.gapfig figcaption{font-weight:600;font-size:.95rem;margin:0 0 2px 4px}
+.gapchart{position:relative}
+.gapchart svg{width:100%;height:auto;display:block}
+.gapchart .band{fill:var(--band)}
+.gapchart .grid{stroke:var(--rule);stroke-width:1}
+.gapchart .tick{fill:var(--muted);font-size:10px;font-family:"IBM Plex Sans",sans-serif}
+.gapchart .line{fill:none;stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.gapchart .line.s1{stroke:var(--s1)}.gapchart .line.s2{stroke:var(--s2);stroke-dasharray:5 3}
+.gapchart .dot{stroke:var(--bg);stroke-width:2}.gapchart .dot.s1{fill:var(--s1)}.gapchart .dot.s2{fill:var(--s2)}
+.gapchart .cross{stroke:var(--muted);stroke-width:1}
+.tip{position:absolute;pointer-events:none;background:var(--bg);border:1px solid var(--rule);border-radius:6px;
+padding:6px 9px;font-size:.82rem;line-height:1.45;box-shadow:0 2px 8px rgba(0,0,0,.12);min-width:160px;color:var(--ink)}
+.tip .muted{color:var(--muted)}
+details{margin:0 0 18px;color:var(--ink2);font-size:.92rem}summary{cursor:pointer;margin-bottom:8px}
+.files{color:var(--ink2);max-width:72ch;padding-left:20px}.files li{margin:0 0 8px}
+code{font-family:"IBM Plex Mono",monospace;font-size:.88em;background:var(--panel);padding:1px 5px;border-radius:3px}
+footer p{color:var(--muted);font-size:.86rem;border-top:1px solid var(--rule);padding-top:16px;margin:0}
+
+.chip.na{color:var(--muted);background:var(--panel)}
+header{margin-bottom:40px}
+table.matrix td{padding:12px}
+table.matrix td:first-child{font-weight:500;color:var(--ink)}
+.callout{border-left:3px solid var(--rule);padding:2px 0 2px 16px;margin:0 0 18px;max-width:72ch;color:var(--ink2)}
+
+.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin:0 0 14px}
+.gallery figure{margin:0}
+.gallery a{display:block;border:1px solid var(--rule);border-radius:4px;overflow:hidden;background:#fff}
+.gallery img{width:100%;height:auto;display:block}
+.gallery figcaption{font-size:.88rem;color:var(--ink2);margin-top:6px}
+.links{font-size:.92rem;color:var(--ink2)}
+</style></head><body><main>
+
+<header>
+<nav class="stagenav" aria-label="Stages"><a href="metering_report.html">1 Metering</a><a href="rating_report.html">2 Rating</a><a href="billing_report.html">3 Billing</a><span>4 Invoicing</span></nav>
+<p class="kicker">Meter-to-cash demo · Stage 4 of 5: Invoicing</p>
+<h1>Right numbers, wrong page</h1>
+<p class="lede">Every invoice ties to its statement to the cent. Two of them still fail the customer. On
+INV-202701-1001 the November true-up is printed as December energy, and on INV-202701-1003 it is a bare
+$12.97 “Adjustment” with nothing to say what it is for. Neither is a wrong number. Both come from
+how the invoicing system builds the page, so a tie-out can't see them, but a customer checking the bill would.</p>
+</header>
+
+<section><h2>The January 1 invoices</h2>
+<p>Sample PDFs, generated from the corrected billing statements. Click to open.</p>
+<div class="gallery"><figure><a href="invoices/INV-202701-1001.pdf"><img src="invoices/INV-202701-1001.png" alt="Page 1 of sample invoice INV-202701-1001" loading="lazy"></a><figcaption>INV-202701-1001: true-up printed as December energy</figcaption></figure><figure><a href="invoices/INV-202701-1002.pdf"><img src="invoices/INV-202701-1002.png" alt="Page 1 of sample invoice INV-202701-1002" loading="lazy"></a><figcaption>INV-202701-1002: correct</figcaption></figure><figure><a href="invoices/INV-202701-1003.pdf"><img src="invoices/INV-202701-1003.png" alt="Page 1 of sample invoice INV-202701-1003" loading="lazy"></a><figcaption>INV-202701-1003: bare “Adjustment”</figcaption></figure></div>
+<p class="links">December 1 invoices, with the estimated-usage disclosure: <a href="invoices/INV-202612-1001.pdf">INV-202612-1001</a> · <a href="invoices/INV-202612-1002.pdf">INV-202612-1002</a> · <a href="invoices/INV-202612-1003.pdf">INV-202612-1003</a></p>
+</section>
+
+<section><h2>Which check catches what</h2>
+<div class="scroll"><table class=""><thead><tr><th class="" scope="col"></th><th class="" scope="col">1. Tie-out</th><th class="" scope="col">2. Classification</th><th class="" scope="col">3. Required fields</th><th class="" scope="col">4. Adjustment references</th><th class="" scope="col">5. Customer recompute</th></tr></thead><tbody><tr><td class="">Mislabeled line (INV-202701-1001)</td><td class=""><span class="chip bad"><span aria-hidden="true">✗</span> Passes</span></td><td class=""><span class="chip ok"><span aria-hidden="true">✓</span> Caught</span></td><td class=""><span class="chip bad"><span aria-hidden="true">✗</span> Passes</span></td><td class=""><span class="chip na"><span aria-hidden="true">–</span> Not printed as an adjustment</span></td><td class=""><span class="chip ok"><span aria-hidden="true">✓</span> Caught</span></td></tr><tr><td class="">Missing reference (INV-202701-1003)</td><td class=""><span class="chip bad"><span aria-hidden="true">✗</span> Passes</span></td><td class=""><span class="chip bad"><span aria-hidden="true">✗</span> Passes</span></td><td class=""><span class="chip bad"><span aria-hidden="true">✗</span> Passes</span></td><td class=""><span class="chip ok"><span aria-hidden="true">✓</span> Caught</span></td><td class=""><span class="chip ok"><span aria-hidden="true">✓</span> Caught</span></td></tr><tr><td class="">The other 4 invoices</td><td class=""><span class="chip na"><span aria-hidden="true">–</span> Passes</span></td><td class=""><span class="chip na"><span aria-hidden="true">–</span> Passes</span></td><td class=""><span class="chip na"><span aria-hidden="true">–</span> Passes</span></td><td class=""><span class="chip na"><span aria-hidden="true">–</span> Passes</span></td><td class=""><span class="chip na"><span aria-hidden="true">–</span> Passes</span></td></tr></tbody></table></div>
+</section>
+
+<nav class="steps" aria-label="Steps"><a href="#s1">1 Tie-out</a><a href="#s2">2 Classification</a>
+<a href="#s3">3 Required fields</a><a href="#s4">4 Adjustment references</a><a href="#s5">5 Customer recompute</a></nav>
+
+<section id="s1"><h2><span class="num">1</span>Statement-to-invoice tie-out</h2>
+<p>Every statement line is carried onto its invoice once, with the same amount, and the amount due matches. This passes
+on all six invoices, including both problem ones.</p>
+<div class="scroll"><table class=""><thead><tr><th class="" scope="col">Invoice</th><th class="n" scope="col">Statement lines</th><th class="n" scope="col">Carried on invoice</th><th class="n" scope="col">Amount due (invoice)</th><th class="n" scope="col">Amount due (statement)</th><th class="" scope="col">Result</th></tr></thead><tbody><tr><td class="">INV-202612-1001</td><td class="n">1</td><td class="n">1</td><td class="n">$2,193.06</td><td class="n">$2,193.06</td><td class=""><span class="chip na"><span aria-hidden="true">–</span> Ties</span></td></tr><tr><td class="">INV-202612-1002</td><td class="n">1</td><td class="n">1</td><td class="n">$102.96</td><td class="n">$102.96</td><td class=""><span class="chip na"><span aria-hidden="true">–</span> Ties</span></td></tr><tr><td class="">INV-202612-1003</td><td class="n">1</td><td class="n">1</td><td class="n">$2,633.59</td><td class="n">$2,633.59</td><td class=""><span class="chip na"><span aria-hidden="true">–</span> Ties</span></td></tr><tr><td class="">INV-202701-1001</td><td class="n">5</td><td class="n">5</td><td class="n">$3,339.13</td><td class="n">$3,339.13</td><td class=""><span class="chip na"><span aria-hidden="true">–</span> Ties</span></td></tr><tr><td class="">INV-202701-1002</td><td class="n">5</td><td class="n">5</td><td class="n">$109.34</td><td class="n">$109.34</td><td class=""><span class="chip na"><span aria-hidden="true">–</span> Ties</span></td></tr><tr><td class="">INV-202701-1003</td><td class="n">6</td><td class="n">6</td><td class="n">$2,546.42</td><td class="n">$2,546.42</td><td class=""><span class="chip na"><span aria-hidden="true">–</span> Ties</span></td></tr></tbody></table></div>
+</section>
+
+<section id="s2"><h2><span class="num">2</span>Classification</h2>
+<p>Each printed line must sit in the section its statement line belongs in. One doesn't.</p>
+<div class="scroll"><table class=""><thead><tr><th class="" scope="col">Invoice</th><th class="" scope="col">Printed as</th><th class="n" scope="col">Amount</th><th class="" scope="col">Statement line type</th><th class="" scope="col">Belongs in</th><th class="" scope="col">Result</th></tr></thead><tbody><tr><td class="">INV-202701-1001</td><td class="">Current: “Energy”</td><td class="n">−$7.11</td><td class="">TRUE_UP</td><td class="">Adjustment</td><td class=""><span class="chip ok"><span aria-hidden="true">✓</span> Wrong section</span></td></tr></tbody></table></div>
+<p class="callout">The commercial invoice template maps true-ups into current charges as “Energy.” INV-202701-1001
+shows December current charges of $2,443.43 when December's actual charges were $2,450.54, so the
+customer is told they used less than they did, and the November correction disappears from view. Residential and
+industrial templates map true-ups correctly; one bad mapping mislabels every invoice that uses it. Fix the template.</p>
+</section>
+
+<section id="s3"><h2><span class="num">3</span>Required fields</h2>
+<p>Account, bill-to, invoice number and date, service period, due date and remit-to, plus the estimated-usage
+disclosure on any invoice that bills estimated usage, with actual and estimated kWh adding up to the kWh billed.</p>
+<div class="scroll"><table class=""><thead><tr><th class="" scope="col">Invoice</th><th class="" scope="col">Required fields</th><th class="" scope="col">Estimated usage</th><th class="" scope="col">Disclosure</th><th class="" scope="col">Result</th></tr></thead><tbody><tr><td class="">INV-202612-1001</td><td class="">All present</td><td class="">Yes</td><td class="">present, ties to billed kWh</td><td class=""><span class="chip na"><span aria-hidden="true">–</span> Passes</span></td></tr><tr><td class="">INV-202612-1002</td><td class="">All present</td><td class="">Yes</td><td class="">present, ties to billed kWh</td><td class=""><span class="chip na"><span aria-hidden="true">–</span> Passes</span></td></tr><tr><td class="">INV-202612-1003</td><td class="">All present</td><td class="">Yes</td><td class="">present, ties to billed kWh</td><td class=""><span class="chip na"><span aria-hidden="true">–</span> Passes</span></td></tr><tr><td class="">INV-202701-1001</td><td class="">All present</td><td class="">No</td><td class="">Not needed</td><td class=""><span class="chip na"><span aria-hidden="true">–</span> Passes</span></td></tr><tr><td class="">INV-202701-1002</td><td class="">All present</td><td class="">No</td><td class="">Not needed</td><td class=""><span class="chip na"><span aria-hidden="true">–</span> Passes</span></td></tr><tr><td class="">INV-202701-1003</td><td class="">All present</td><td class="">No</td><td class="">Not needed</td><td class=""><span class="chip na"><span aria-hidden="true">–</span> Passes</span></td></tr></tbody></table></div>
+</section>
+
+<section id="s4"><h2><span class="num">4</span>Adjustment references</h2>
+<p>A printed prior-period adjustment must say which invoice it adjusts, for what service period, and the billed and actual
+quantities behind it.</p>
+<div class="scroll"><table class=""><thead><tr><th class="" scope="col">Invoice</th><th class="" scope="col">Printed label</th><th class="n" scope="col">Amount</th><th class="" scope="col">Original invoice</th><th class="" scope="col">Service period</th><th class="" scope="col">Result</th></tr></thead><tbody><tr><td class="">INV-202701-1002</td><td class="">Prior-period adjustment: November service, true-up of estimated usage</td><td class="n">−$0.14</td><td class="">INV-202612-1002</td><td class="">Nov 1–30, 2026</td><td class=""><span class="chip na"><span aria-hidden="true">–</span> Complete</span></td></tr><tr><td class="">INV-202701-1003</td><td class="">Adjustment</td><td class="n">+$12.97</td><td class="">—</td><td class="">—</td><td class=""><span class="chip ok"><span aria-hidden="true">✓</span> No original invoice; no service period; no billed vs actual quantities</span></td></tr></tbody></table></div>
+<p class="callout">The true-up looks up its original invoice in the register, but only among invoices with status ISSUED.
+Credit CR-0003 marked A-1003's December invoice ADJUSTED, so the lookup came back empty and the template fell
+back to a bare “Adjustment.” The amount is right and the invoice ties out; the customer just can't tell what
+$12.97 is for. Fix the lookup to include adjusted invoices, then reissue.</p>
+<div class="scroll"><table class=""><thead><tr><th class="" scope="col">Invoice</th><th class="" scope="col">Account</th><th class="" scope="col">Service</th><th class="" scope="col">Status</th></tr></thead><tbody><tr><td class="">INV-202612-1001</td><td class="">A-1001</td><td class="">2026-11-01 to 2026-11-30</td><td class="">ISSUED</td></tr><tr><td class="">INV-202612-1002</td><td class="">A-1002</td><td class="">2026-11-01 to 2026-11-30</td><td class="">ISSUED</td></tr><tr><td class="">INV-202612-1003</td><td class="">A-1003</td><td class="">2026-11-01 to 2026-11-30</td><td class="">ADJUSTED</td></tr></tbody></table></div>
+</section>
+
+<section id="s5"><h2><span class="num">5</span>Customer-view recompute</h2>
+<p>Using only what is printed, recompute every amount: quantity × rate, the interest periods, the credit and true-up
+detail, each subtotal, and the amount due. Anything that can't be recomputed from the page is something the customer
+needs and doesn't have.</p>
+<div class="scroll"><table class=""><thead><tr><th class="" scope="col">Invoice</th><th class="n" scope="col">Amounts checked</th><th class="n" scope="col">Recomputed from the page</th><th class="" scope="col">Result</th></tr></thead><tbody><tr><td class="">INV-202612-1001</td><td class="n">9</td><td class="n">9</td><td class=""><span class="chip na"><span aria-hidden="true">–</span> All recompute</span></td></tr><tr><td class="">INV-202612-1002</td><td class="n">9</td><td class="n">9</td><td class=""><span class="chip na"><span aria-hidden="true">–</span> All recompute</span></td></tr><tr><td class="">INV-202612-1003</td><td class="n">9</td><td class="n">9</td><td class=""><span class="chip na"><span aria-hidden="true">–</span> All recompute</span></td></tr><tr><td class="">INV-202701-1001</td><td class="n">11</td><td class="n">10</td><td class=""><span class="chip ok"><span aria-hidden="true">✓</span> 1 cannot be checked</span></td></tr><tr><td class="">INV-202701-1002</td><td class="n">12</td><td class="n">12</td><td class=""><span class="chip na"><span aria-hidden="true">–</span> All recompute</span></td></tr><tr><td class="">INV-202701-1003</td><td class="n">14</td><td class="n">13</td><td class=""><span class="chip ok"><span aria-hidden="true">✓</span> 1 cannot be checked</span></td></tr></tbody></table></div>
+<div class="scroll"><table class=""><thead><tr><th class="" scope="col">Invoice</th><th class="" scope="col">Section</th><th class="" scope="col">Printed</th><th class="n" scope="col">Amount</th><th class="" scope="col">Why</th></tr></thead><tbody><tr><td class="">INV-202701-1001</td><td class="">Current</td><td class="">Energy</td><td class="n">−$7.11</td><td class="">no quantity, rate or detail printed</td></tr><tr><td class="">INV-202701-1003</td><td class="">Adjustment</td><td class="">Adjustment</td><td class="n">$12.97</td><td class="">no quantity, rate or detail printed</td></tr></tbody></table></div>
+<p>The customer who received the bare adjustment is the one to watch: an unexplained charge tends to go unpaid. That is
+where collection picks up.</p>
+</section>
+
+<section><h2>Handed to collection</h2>
+<ul class="files">
+<li><code>output/invoices/</code>: the six sample invoices as PDF.</li>
+<li><code>output/invoice_lines.csv</code>: every printed line, with its section, source statement line and references.</li>
+<li><code>output/invoicing_checks.csv</code>: results of the five checks per invoice.</li>
+</ul></section>
+
+<footer><p>Synthetic data (seed 7); statements from the billing stage. Company, customers and addresses are fictional.
+Scenario design from real settlement work by Archer Opitz; built with AI assistance.</p></footer>
+</main></body></html>

@@ -162,7 +162,7 @@ def render(r, seed):
 <style>{CSS}</style></head><body><main>
 
 <header>
-<nav class="stagenav" aria-label="Stages"><a href="metering_report.html">1 Metering</a><a href="rating_report.html">2 Rating</a><span>3 Billing</span></nav>
+<nav class="stagenav" aria-label="Stages"><a href="metering_report.html">1 Metering</a><a href="rating_report.html">2 Rating</a><span>3 Billing</span><a href="invoicing_report.html">4 Invoicing</a></nav>
 <p class="kicker">Meter-to-cash demo · Stage 3 of 5: Billing</p>
 <h1>The balance ties. The interest doesn't.</h1>
 <p class="lede">All three January 1 statements roll forward to the cent. Yet {esc(bad)} is charged
