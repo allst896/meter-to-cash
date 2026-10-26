@@ -115,10 +115,18 @@ def render(r, seed):
     ch = r["chain"]
     chain_tbl = table(["Account", "Dec 1 bill (Nov, as billed)", "Zone credit", "True-up", "Net for November",
                        "Corrected final rating", ""],
-                      [[esc(x.account_id), money(x.dec1_billed), money(-x.credit, True), money(x.true_up, True),
+                      [[esc(x.account_id), money(x.dec1_billed), money(-x.credit, True),
+                        f"Held ({money(x.held_amount, True)})" if x.held else money(x.true_up, True),
                         money(x.net_november), money(x.corrected_final),
+                        status("na", "Ties after Feb 1") if x.held else
                         status("caught", "Ties") if x.ties else status("missed", "Off")] for x in ch.itertuples()],
                       num=(1, 2, 3, 4, 5))
+
+    hd = ch[ch["held"]]
+    held_note = "" if hd.empty else (
+        " The true-up only runs for meters whose December 1 register read was submitted by the "
+        "December 28 cutoff. " + ", ".join(esc(x) for x in hd["account_id"]) +
+        "'s read came in after it, so its true-up waits for the February 1 bill. Collection picks this up.")
 
     rf = r["roll_forward"]
     rf_tbl = table(["Account", "Sum of lines", "Amount due printed", "Prior = Dec 1 bill", "Payments = ledger", "Result"],
@@ -162,7 +170,7 @@ def render(r, seed):
 <style>{CSS}</style></head><body><main>
 
 <header>
-<nav class="stagenav" aria-label="Stages"><a href="metering_report.html">1 Metering</a><a href="rating_report.html">2 Rating</a><span>3 Billing</span><a href="invoicing_report.html">4 Invoicing</a></nav>
+<nav class="stagenav" aria-label="Stages"><a href="metering_report.html">1 Metering</a><a href="rating_report.html">2 Rating</a><span>3 Billing</span><a href="invoicing_report.html">4 Invoicing</a><a href="collection_report.html">5 Collection</a></nav>
 <p class="kicker">Meter-to-cash demo · Stage 3 of 5: Billing</p>
 <h1>The balance ties. The interest doesn't.</h1>
 <p class="lede">All three January 1 statements roll forward to the cent. Yet {esc(bad)} is charged
@@ -185,7 +193,7 @@ The true-up carries no interest because it was not billed before January 1.</p>
 <p>The December 1 bill was November's initial rating as production billed it, with M3 still in the wrong zone. Two
 adjustments arrive on January 1: the zone fix as credit {esc(cred.credit_id)} ({money(float(cred.amount))}, effective
 {_fmt_date(cred.effective_date)}), and the true-up, which replaces metering's estimate with actuals. Together they bring every
-account to November's corrected final rating.</p>
+account to November's corrected final rating.{held_note}</p>
 {chain_tbl}
 </section>
 

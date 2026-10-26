@@ -1,0 +1,4 @@
+posted_date,account_id,invoice_no,amount,reference,entered_by,note
+2027-01-22,A-1020,,-109.48,CHK-20270115-2204,correction,Reverse: belongs to A-1002 (transposed digits)
+2027-01-22,A-1002,INV-202701-1002,109.48,CHK-20270115-2204,correction,"Repost, effective 2027-01-15 (date received)"
+2027-02-03,A-1003,INV-202701-1003-R1,12.97,ACH-20270203-0129,jlopez,Paid after reissue

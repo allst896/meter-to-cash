@@ -11,6 +11,7 @@ CSS = RATING_CSS + """
 .gallery img{width:100%;height:auto;display:block}
 .gallery figcaption{font-size:.88rem;color:var(--ink2);margin-top:6px}
 .links{font-size:.92rem;color:var(--ink2)}
+.links a{color:var(--ink)}
 """
 
 
@@ -103,7 +104,7 @@ def render(r, seed, out_dir):
 <style>{CSS}</style></head><body><main>
 
 <header>
-<nav class="stagenav" aria-label="Stages"><a href="metering_report.html">1 Metering</a><a href="rating_report.html">2 Rating</a><a href="billing_report.html">3 Billing</a><span>4 Invoicing</span></nav>
+<nav class="stagenav" aria-label="Stages"><a href="metering_report.html">1 Metering</a><a href="rating_report.html">2 Rating</a><a href="billing_report.html">3 Billing</a><span>4 Invoicing</span><a href="collection_report.html">5 Collection</a></nav>
 <p class="kicker">Meter-to-cash demo · Stage 4 of 5: Invoicing</p>
 <h1>Right numbers, wrong page</h1>
 <p class="lede">Every invoice ties to its statement to the cent. Two of them still fail the customer. On

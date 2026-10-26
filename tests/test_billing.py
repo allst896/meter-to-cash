@@ -83,6 +83,9 @@ def test_correction_removes_exactly_the_overcharge(result):
 def test_chain_ties_to_corrected_rating(result):
     ch = result["chain"]
     assert ch["ties"].all()
+    assert list(ch.loc[ch["held"], "account_id"]) == ["A-1002"]          # read submitted after the cutoff
+    st = result["corrected"]
+    assert set(st.loc[st["line_type"] == "TRUE_UP", "account_id"]) == {"A-1001", "A-1003"}
     assert (ch.set_index("account_id").loc[["A-1001", "A-1002"], "credit"] == 0).all()
     assert ch.set_index("account_id").loc["A-1003", "credit"] > 0
 

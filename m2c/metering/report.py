@@ -33,7 +33,8 @@ def table(headers, rows, num=(), cls=""):
 
 
 def day_label(d):
-    return pd.Timestamp(d).strftime("%b %-d")
+    t = pd.Timestamp(d)
+    return f"{t.strftime('%b')} {t.day}"     # %-d is not portable to Windows
 
 
 # ------------------------------------------------------------------ chart data
@@ -284,7 +285,7 @@ def render(r, seed):
 <style>{CSS}</style></head><body><main>
 
 <header>
-<nav class="stagenav" aria-label="Stages"><span>1 Metering</span><a href="rating_report.html">2 Rating</a><a href="billing_report.html">3 Billing</a><a href="invoicing_report.html">4 Invoicing</a></nav>
+<nav class="stagenav" aria-label="Stages"><span>1 Metering</span><a href="rating_report.html">2 Rating</a><a href="billing_report.html">3 Billing</a><a href="invoicing_report.html">4 Invoicing</a><a href="collection_report.html">5 Collection</a></nav>
 <p class="kicker">Meter-to-cash demo · Stage 1 of 5: Metering</p>
 <h1>Which feed is wrong, and why</h1>
 <p class="lede">Two feeds report the same three meters for November 2026. Source B passes a month-level count

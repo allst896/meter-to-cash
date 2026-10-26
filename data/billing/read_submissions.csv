@@ -1,0 +1,4 @@
+meter_id,read_for,read_type,read_taken,submitted_at,note
+M1,2026-12-01 00:00,AMI,2026-12-01 00:00,2026-12-01 06:10,
+M2,2026-12-01 00:00,Field verification,2026-12-28 14:40,2026-12-29 09:14,AMI read flagged (communication error); field verification ordered Dec 4
+M3,2026-12-01 00:00,AMI,2026-12-01 00:00,2026-12-01 06:10,

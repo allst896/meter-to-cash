@@ -90,10 +90,14 @@ def chain_tie_out(d):
         amt = lambda run: round(lines[(lines["run"] == run) & (lines["meter_id"] == m)]["amount"].sum(), 2)
         billed, fin = amt("Nov initial (as billed)"), amt("Nov final (corrected)")
         credit = float(d["credits"][d["credits"]["account_id"] == a]["amount"].astype(float).sum())
-        true_up = round(fin - amt("Nov initial (corrected)"), 2)
+        pending = round(fin - amt("Nov initial (corrected)"), 2)
+        held = not S.true_up_ready(d, m)
+        true_up = 0.0 if held else pending
         net = round(billed - credit + true_up, 2)
         rows.append({"account_id": a, "dec1_billed": billed, "credit": credit, "true_up": true_up,
-                     "net_november": net, "corrected_final": fin, "ties": abs(net - fin) <= 0.011})
+                     "net_november": net, "corrected_final": fin, "held": held,
+                     "held_amount": pending if held else 0.0,
+                     "ties": abs(net - fin) <= 0.011 or (held and abs(net + pending - fin) <= 0.011)})
     return pd.DataFrame(rows)
 
 

@@ -31,7 +31,7 @@ ACCENT, BAND = colors.HexColor("#1f4e79"), colors.HexColor("#f3efe4")
 st = {
     "body": ParagraphStyle("b", fontName=F, fontSize=8.8, leading=12, textColor=INK),
     "small": ParagraphStyle("s", fontName=F, fontSize=7.6, leading=10, textColor=MUTED),
-    "h": ParagraphStyle("h", fontName=FB, fontSize=10, leading=13, textColor=ACCENT, spaceBefore=7, spaceAfter=3),
+    "h": ParagraphStyle("h", fontName=FB, fontSize=10, leading=13, textColor=ACCENT, spaceBefore=6, spaceAfter=2),
     "title": ParagraphStyle("t", fontName=FB, fontSize=17, leading=21, textColor=ACCENT),
     "right": ParagraphStyle("r", fontName=F, fontSize=8.8, leading=12, textColor=INK, alignment=2),
 }
@@ -55,7 +55,7 @@ def _table(rows, widths, header=True, bold_last=False, num_from=1):
     style = [("FONT", (0, 0), (-1, -1), F, 8.6), ("TEXTCOLOR", (0, 0), (-1, -1), INK),
              ("ALIGN", (num_from, 0), (-1, -1), "RIGHT"), ("VALIGN", (0, 0), (-1, -1), "TOP"),
              ("LINEBELOW", (0, 0), (-1, -1), 0.4, RULE),
-             ("TOPPADDING", (0, 0), (-1, -1), 2.4), ("BOTTOMPADDING", (0, 0), (-1, -1), 2.4),
+             ("TOPPADDING", (0, 0), (-1, -1), 1.8), ("BOTTOMPADDING", (0, 0), (-1, -1), 1.8),
              ("LEFTPADDING", (0, 0), (-1, -1), 3), ("RIGHTPADDING", (0, 0), (-1, -1), 3)]
     if header:
         style += [("FONT", (0, 0), (-1, 0), FB, 8.2), ("TEXTCOLOR", (0, 0), (-1, 0), MUTED),
@@ -81,6 +81,14 @@ def render(header, lines, path):
     banner.setStyle(TableStyle([("BACKGROUND", (0, 0), (-1, -1), BAND), ("TOPPADDING", (0, 0), (-1, -1), 5),
                                 ("BOTTOMPADDING", (0, 0), (-1, -1), 5)]))
     story += [banner, Spacer(1, 10)]
+    if h.get("reissue"):
+        x = h["reissue"]
+        box = Table([[Paragraph(f"<b>Reissued</b>: replaces {x['replaces']} ({d(x['original_date'])}). {x['reason']} "
+                                f"Paid {money(x['paid'])} on {d(x['paid_on'])}; <b>balance due {money(x['balance'])}</b> "
+                                f"by {d(x['due'])}.", st["small"])]], colWidths=[W])
+        box.setStyle(TableStyle([("BOX", (0, 0), (-1, -1), 0.8, ACCENT), ("TOPPADDING", (0, 0), (-1, -1), 3),
+                                 ("BOTTOMPADDING", (0, 0), (-1, -1), 4), ("LEFTPADDING", (0, 0), (-1, -1), 6)]))
+        story += [box, Spacer(1, 4)]
 
     meta = [["Account", h["account_id"]], ["Service period", h["service_period"]],
             ["Invoice date", d(h["invoice_date"])], ["Due date", d(h["due_date"])]]
@@ -167,13 +175,14 @@ def render(header, lines, path):
     story += [Spacer(1, 8), Paragraph("Amounts are quantity × rate, rounded to the cent on each line.", st["small"])]
     stub = Table([[Paragraph(f"<b>Remit to</b><br/>{h['remit_to']}", st["body"]),
                    Paragraph(f"Account {h['account_id']}<br/>Invoice {h['invoice_no']}<br/>"
-                             f"<b>Amount due {money(h['amount_due'])}</b> by {d(h['due_date'])}", st["right"])]],
+                             + (f"<b>Balance due {money(h['reissue']['balance'])}</b> by {d(h['reissue']['due'])}" if h.get("reissue")
+                              else f"<b>Amount due {money(h['amount_due'])}</b> by {d(h['due_date'])}"), st["right"])]],
                  colWidths=[W * 0.55, W * 0.45])
-    stub.setStyle(TableStyle([("LINEABOVE", (0, 0), (-1, 0), 0.8, MUTED, None, (3, 3)), ("TOPPADDING", (0, 0), (-1, -1), 8),
+    stub.setStyle(TableStyle([("LINEABOVE", (0, 0), (-1, 0), 0.8, MUTED, None, (3, 3)), ("TOPPADDING", (0, 0), (-1, -1), 5),
                               ("VALIGN", (0, 0), (-1, -1), "TOP"), ("LEFTPADDING", (0, 0), (-1, -1), 0)]))
-    story += [Spacer(1, 6), KeepTogether([stub])]
+    story += [Spacer(1, 3), KeepTogether([stub])]
 
     doc = SimpleDocTemplate(path, pagesize=letter, leftMargin=0.65 * inch, rightMargin=0.65 * inch,
-                            topMargin=0.45 * inch, bottomMargin=0.45 * inch,
+                            topMargin=0.38 * inch, bottomMargin=0.32 * inch,
                             title=f"{h['invoice_no']} (sample)", author=f"{UTILITY} (fictional)")
     doc.build(story)

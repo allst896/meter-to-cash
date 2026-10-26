@@ -68,7 +68,8 @@ def _charge_lines(rated, meter, run, by_quality=False):
     return out
 
 
-def build(bdata, statements, usage):
+def build(bdata, statements, usage, lookup_statuses=("ISSUED",)):
+    """lookup_statuses: invoice statuses the true-up's original-invoice lookup searches (the fix adds ADJUSTED)."""
     accts = bdata["accounts"].set_index("account_id")
     rated = bdata["lines"].copy()
     rated["quantity"] = rated["quantity"].astype(float)
@@ -89,7 +90,7 @@ def build(bdata, statements, usage):
 
     def original_invoice(account, service_from):
         hit = register[(register["account_id"] == account) & (register["service_from"] == service_from)
-                       & (register["status"] == "ISSUED")]                      # the lookup gap
+                       & (register["status"].isin(lookup_statuses))]             # the lookup gap: ISSUED only
         return None if hit.empty else hit.iloc[0]["invoice_no"]
 
     def add(inv, **kw):
@@ -154,10 +155,13 @@ def build(bdata, statements, usage):
             add(inv, account_id=a, section="CURRENT", label=c["label"], qty=c["qty"], unit=c["unit"],
                 rate=c["rate"], amount=c["amount"], source="CURRENT")
 
-        # True-up, through the template
-        tu = float(s.loc["TRUE_UP", "amount"])
+        # True-up, through the template (none when billing held it for a late read)
+        has_tu = "TRUE_UP" in s.index
+        tu = float(s.loc["TRUE_UP", "amount"]) if has_tu else 0.0
         section, label = tmpl["TRUE_UP"]
-        if section == "ADJUSTMENT":
+        if not has_tu:
+            pass
+        elif section == "ADJUSTMENT":
             ref = original_invoice(a, NOV[0])
             if ref:
                 ini = {c["code"]: c for c in _charge_lines(rated, m, "Nov initial (corrected)")}

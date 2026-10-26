@@ -1,0 +1,5 @@
+reference,received_date,payer,amount,invoice_ref,account_ref,invoice_no,account_id,matched_by,invoice_amount,difference,result
+ACH-20270112-0091,2027-01-12,Residential Customer 1020,87.12,INV-202701-1020,A-1020,INV-202701-1020,A-1020,Invoice number on remittance,87.12,0.0,Exact match
+CHK-20270115-2204,2027-01-15,Residential Customer 1002,109.48,,A-1002,INV-202701-1002,A-1002,Account and amount,109.48,0.0,Exact match
+ACH-20270119-0318,2027-01-19,Commercial Customer 1001,3339.13,INV-202701-1001,A-1001,INV-202701-1001,A-1001,Invoice number on remittance,3339.13,0.0,Exact match
+ACH-20270120-0577,2027-01-20,Industrial Customer 1003,2533.45,INV-202701-1003,A-1003,INV-202701-1003,A-1003,Invoice number on remittance,2546.42,-12.97,Short-pay

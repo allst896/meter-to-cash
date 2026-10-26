@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Collection Diagnostics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fcfcfb;--ink:#0b0b0b;--ink2:#52514e;--muted:#6f6e69;--rule:#dcdad4;--panel:#f2f1ed;
+--s1:#2a78d6;--s2:#eb6834;--band:#efe9dc;--ok:#1d6b45;--ok-bg:#e1f0e7;--warn:#7a5200;--warn-bg:#f6ead0;--bad:#a3312b;--bad-bg:#f7e4e2}
+@media (prefers-color-scheme:dark){:root:where(:not([data-theme="light"])){--bg:#1a1a19;--ink:#f0efec;--ink2:#c3c2b7;
+--muted:#9c9b92;--rule:#34332f;--panel:#232321;--s1:#3987e5;--s2:#d95926;--band:#2c2a24;--ok:#7cc89c;--ok-bg:#1b3326;--warn:#e3b460;--warn-bg:#33281a;
+--bad:#f08c84;--bad-bg:#3a1d1b}}
+:root[data-theme="dark"]{--bg:#1a1a19;--ink:#f0efec;--ink2:#c3c2b7;--muted:#9c9b92;--rule:#34332f;--panel:#232321;
+--s1:#3987e5;--s2:#d95926;--band:#2c2a24;--ok:#7cc89c;--ok-bg:#1b3326;--warn:#e3b460;--warn-bg:#33281a;--bad:#f08c84;--bad-bg:#3a1d1b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "IBM Plex Sans",system-ui,sans-serif;font-variant-numeric:tabular-nums}
+main{max-width:1040px;margin:0 auto;padding:48px 16px 64px}
+.kicker{color:var(--muted);margin:0 0 6px;font-weight:500}
+.stagenav{display:flex;gap:18px;font-size:.92rem;margin:0 0 6px}
+.stagenav a{color:var(--ink2)}.stagenav span{color:var(--ink);font-weight:500}
+h1{font-size:clamp(1.9rem,4.5vw,2.8rem);line-height:1.12;margin:0 0 16px;font-weight:600;letter-spacing:-.015em}
+.lede{font-size:1.15rem;max-width:66ch;margin:0;color:var(--ink2)}
+.lede strong{color:var(--ink)}
+.steps{display:flex;flex-wrap:wrap;gap:6px 18px;margin:28px 0 40px;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.steps a{color:var(--ink2);text-decoration:none;font-size:.92rem}.steps a:hover{color:var(--ink);text-decoration:underline}
+section{margin:0 0 52px}
+h2{font-size:1.35rem;font-weight:600;margin:0 0 10px;display:flex;align-items:baseline;gap:12px}
+h2 .num{font-family:"IBM Plex Mono",monospace;font-weight:400;font-size:1rem;color:var(--muted)}
+h3{font-size:1.05rem;font-weight:600;margin:28px 0 6px}
+section p{max-width:72ch;color:var(--ink2);margin:0 0 14px}
+.note{font-size:.92rem}
+.scroll{overflow-x:auto;margin:0 0 18px}
+table{border-collapse:collapse;width:100%;font-size:.93rem}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-weight:500;color:var(--ink2);border-bottom:2px solid var(--ink)}
+td.n,th.n{text-align:right}
+.chip{display:inline-block;margin-top:3px;padding:1px 8px;border-radius:4px;font-size:.82rem;font-weight:500;white-space:nowrap}
+.chip.ok{color:var(--ok);background:var(--ok-bg)}.chip.warn{color:var(--warn);background:var(--warn-bg)}.chip.bad{color:var(--bad);background:var(--bad-bg)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 20px;font-size:.9rem;color:var(--ink2);margin:6px 0 10px}
+.sw{display:inline-block;width:14px;height:3px;border-radius:2px;vertical-align:middle;margin-right:6px}
+.sw.s1{background:var(--s1)}.sw.s2{background:repeating-linear-gradient(90deg,var(--s2) 0 5px,transparent 5px 8px)}.sw.band{background:var(--band);height:12px;border:1px solid var(--rule)}
+.gapcharts{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin:0 0 12px}
+.gapfig{margin:0;border:1px solid var(--rule);border-radius:6px;padding:10px 10px 4px;background:var(--bg)}
+.gapfig figcaption{font-weight:600;font-size:.95rem;margin:0 0 2px 4px}
+.gapchart{position:relative}
+.gapchart svg{width:100%;height:auto;display:block}
+.gapchart .band{fill:var(--band)}
+.gapchart .grid{stroke:var(--rule);stroke-width:1}
+.gapchart .tick{fill:var(--muted);font-size:10px;font-family:"IBM Plex Sans",sans-serif}
+.gapchart .line{fill:none;stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.gapchart .line.s1{stroke:var(--s1)}.gapchart .line.s2{stroke:var(--s2);stroke-dasharray:5 3}
+.gapchart .dot{stroke:var(--bg);stroke-width:2}.gapchart .dot.s1{fill:var(--s1)}.gapchart .dot.s2{fill:var(--s2)}
+.gapchart .cross{stroke:var(--muted);stroke-width:1}
+.tip{position:absolute;pointer-events:none;background:var(--bg);border:1px solid var(--rule);border-radius:6px;
+padding:6px 9px;font-size:.82rem;line-height:1.45;box-shadow:0 2px 8px rgba(0,0,0,.12);min-width:160px;color:var(--ink)}
+.tip .muted{color:var(--muted)}
+details{margin:0 0 18px;color:var(--ink2);font-size:.92rem}summary{cursor:pointer;margin-bottom:8px}
+.files{color:var(--ink2);max-width:72ch;padding-left:20px}.files li{margin:0 0 8px}
+code{font-family:"IBM Plex Mono",monospace;font-size:.88em;background:var(--panel);padding:1px 5px;border-radius:3px}
+footer p{color:var(--muted);font-size:.86rem;border-top:1px solid var(--rule);padding-top:16px;margin:0}
+
+.chip.na{color:var(--muted);background:var(--panel)}
+header{margin-bottom:40px}
+table.matrix td{padding:12px}
+table.matrix td:first-child{font-weight:500;color:var(--ink)}
+.callout{border-left:3px solid var(--rule);padding:2px 0 2px 16px;margin:0 0 18px;max-width:72ch;color:var(--ink2)}
+
+.chain{list-style:none;padding:0;margin:0 0 18px;counter-reset:c}
+.chain li{position:relative;padding:0 0 16px 34px;border-left:2px solid var(--rule);margin-left:11px}
+.chain li:last-child{border-left-color:transparent}
+.chain li::before{counter-increment:c;content:counter(c);position:absolute;left:-12px;top:-2px;width:22px;height:22px;
+  border-radius:50%;background:var(--panel);border:1px solid var(--rule);font-size:.78rem;text-align:center;line-height:21px;color:var(--ink2)}
+.chain b{color:var(--ink)}
+.chain .where{font-size:.82rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;display:block}
+.evidence{border:1px solid var(--rule);border-radius:6px;padding:18px 20px;margin:0 0 18px}
+.evidence dl{display:grid;grid-template-columns:minmax(120px,190px) 1fr;gap:8px 18px;margin:0}
+.evidence dt{color:var(--muted);font-size:.9rem}
+.evidence dd{margin:0}
+main a{color:var(--ink)}
+.reissue{display:grid;grid-template-columns:minmax(160px,220px) 1fr;gap:20px;align-items:start;margin:0 0 18px}
+.reissue a.thumb{display:block;border:1px solid var(--rule);border-radius:4px;overflow:hidden;background:#fff}
+.reissue img{width:100%;height:auto;display:block}
+@media (max-width:560px){.evidence dl,.reissue{grid-template-columns:1fr}.evidence dt{margin-top:6px}}
+</style></head><body><main>
+
+<header>
+<nav class="stagenav" aria-label="Stages"><a href="metering_report.html">1 Metering</a><a href="rating_report.html">2 Rating</a><a href="billing_report.html">3 Billing</a><a href="invoicing_report.html">4 Invoicing</a><span>5 Collection</span></nav>
+<p class="kicker">Meter-to-cash demo · Stage 5 of 5: Collection</p>
+<h1>The short-pay was a question</h1>
+<p class="lede">A-1003 paid $2,533.45 against a $2,546.42 invoice. The
+$12.97 it held back is exactly the bare “Adjustment” line from invoicing, so this isn't a cash-flow problem;
+it's a question the invoice never answered. Two other accounts look wrong for different reasons: A-1002 paid on time
+but shows unpaid because its check was keyed to A-1020, and A-1002's November is still on
+estimated usage because its meter read came in after the cutoff. Six checks sort out which is which.</p>
+</header>
+
+<section><h2>January cash</h2>
+<p>Everything the bank received through January 22, the day after the invoices fell due, matched to an invoice.</p>
+<div class="scroll"><table class=""><thead><tr><th class="" scope="col">Received</th><th class="" scope="col">Reference</th><th class="" scope="col">Payer</th><th class="n" scope="col">Amount</th><th class="" scope="col">Remittance says</th><th class="" scope="col">Matched to</th><th class="" scope="col">Matched by</th><th class="" scope="col">Result</th></tr></thead><tbody><tr><td class="">Jan 12</td><td class="">ACH-20270112-0091</td><td class="">Residential Customer 1020</td><td class="n">$87.12</td><td class="">INV-202701-1020</td><td class="">INV-202701-1020</td><td class="">Invoice number on remittance</td><td class=""><span class="chip na"><span aria-hidden="true">–</span> Exact match</span></td></tr><tr><td class="">Jan 15</td><td class="">CHK-20270115-2204</td><td class="">Residential Customer 1002</td><td class="n">$109.48</td><td class="">Account A-1002</td><td class="">INV-202701-1002</td><td class="">Account and amount</td><td class=""><span class="chip na"><span aria-hidden="true">–</span> Exact match</span></td></tr><tr><td class="">Jan 19</td><td class="">ACH-20270119-0318</td><td class="">Commercial Customer 1001</td><td class="n">$3,339.13</td><td class="">INV-202701-1001</td><td class="">INV-202701-1001</td><td class="">Invoice number on remittance</td><td class=""><span class="chip na"><span aria-hidden="true">–</span> Exact match</span></td></tr><tr><td class="">Jan 20</td><td class="">ACH-20270120-0577</td><td class="">Industrial Customer 1003</td><td class="n">$2,533.45</td><td class="">INV-202701-1003</td><td class="">INV-202701-1003</td><td class="">Invoice number on remittance</td><td class=""><span class="chip ok"><span aria-hidden="true">✓</span> Short-pay, $12.97</span></td></tr></tbody></table></div>
+</section>
+
+<section><h2>Which check catches what</h2>
+<div class="scroll"><table class="matrix"><thead><tr><th class="" scope="col"></th><th class="" scope="col">1. Match</th><th class="" scope="col">2. Classify</th><th class="" scope="col">3. Vs lines</th><th class="" scope="col">4. Pair</th><th class="" scope="col">5. Reads</th><th class="" scope="col">6. Trace</th></tr></thead><tbody><tr><td class="">Short-pay (A-1003)</td><td class=""><span class="chip na"><span aria-hidden="true">–</span> Invoice no.</span></td><td class=""><span class="chip ok"><span aria-hidden="true">✓</span> Short-pay</span></td><td class=""><span class="chip ok"><span aria-hidden="true">✓</span> One line</span></td><td class=""><span class="chip na"><span aria-hidden="true">–</span> Not flagged</span></td><td class=""><span class="chip na"><span aria-hidden="true">–</span> Read matches</span></td><td class=""><span class="chip ok"><span aria-hidden="true">✓</span> Invoicing</span></td></tr><tr><td class="">Misapplied (A-1002 → A-1020)</td><td class=""><span class="chip na"><span aria-hidden="true">–</span> Account + amount</span></td><td class=""><span class="chip bad"><span aria-hidden="true">✗</span> Exact</span></td><td class="">—</td><td class=""><span class="chip ok"><span aria-hidden="true">✓</span> Paired</span></td><td class="">—</td><td class="">—</td></tr><tr><td class="">Late read (A-1002)</td><td class=""><span class="chip na"><span aria-hidden="true">–</span> Account + amount</span></td><td class=""><span class="chip bad"><span aria-hidden="true">✗</span> Exact</span></td><td class="">—</td><td class="">—</td><td class=""><span class="chip ok"><span aria-hidden="true">✓</span> Timing gap</span></td><td class="">—</td></tr></tbody></table></div>
+<p>Matching and classifying only see the cash. Two of the three problems arrive as exact payments; they turn up
+when the ledger is compared to the bank, and the invoice to the reads.</p>
+</section>
+
+<nav class="steps" aria-label="Steps"><a href="#s1">1–2 Match and classify</a><a href="#s3">3 Short-pay vs lines</a>
+<a href="#s4">4 Pair balances</a><a href="#s5">5 Submitted reads</a><a href="#s6">6 Trace back</a>
+<a href="#dispute">Dispute log</a><a href="#aging">Aging</a></nav>
+
+<section id="s1"><h2><span class="num">1–2</span>Match and classify</h2>
+<p>Each receipt is matched by the invoice number on the remittance; failing that, by account and amount; failing that,
+by amount and date. Then it is classified: exact match, short-pay, overpayment, or unapplied cash. Three of the four
+are exact. A-1002's check carried no invoice number, only “A-1002” on the memo, so it
+matched on account and amount. The bank knows whose payment it is; the question is whether AR does.</p>
+</section>
+
+<section id="s3"><h2><span class="num">3</span>Short-pay against invoice lines</h2>
+<p>The shortfall on INV-202701-1003 is $12.97. Of the 8 printed lines, one matches
+it exactly: the adjustment with no reference.</p>
+<div class="scroll"><table class=""><thead><tr><th class="" scope="col">Printed line</th><th class="" scope="col">Section</th><th class="n" scope="col">Amount</th><th class="" scope="col">Equals the shortfall?</th></tr></thead><tbody><tr><td class="">Payment received 2026-12-20 (ACH-20261220-0552)</td><td class="">Payment</td><td class="n">−$2,633.59</td><td class=""></td></tr><tr><td class="">Credit CR-0003: Delivery zone corrected LZ_WEST to LZ_HOUSTON, November service</td><td class="">Credit</td><td class="n">−$146.07</td><td class=""></td></tr><tr><td class="">Interest, 18% a year after a 5-day grace period</td><td class="">Interest</td><td class="n">$0.00</td><td class=""></td></tr><tr><td class="">Customer charge</td><td class="">Current</td><td class="n">+$250.00</td><td class=""></td></tr><tr><td class="">Energy, on-peak</td><td class="">Current</td><td class="n">+$861.88</td><td class=""></td></tr><tr><td class="">Energy, off-peak</td><td class="">Current</td><td class="n">+$877.62</td><td class=""></td></tr><tr><td class="">Delivery (LZ_HOUSTON)</td><td class="">Current</td><td class="n">+$690.02</td><td class=""></td></tr><tr><td class="">Adjustment</td><td class="">Adjustment</td><td class="n">+$12.97</td><td class=""><span class="chip ok"><span aria-hidden="true">✓</span> Yes</span></td></tr></tbody></table></div>
+<p class="callout">A shortfall that equals one line points to a dispute of that line. A customer short on cash pays a
+round number or nothing; a customer who doesn't recognize a charge pays everything else. A dispute is opened the same
+day, and interest on the $12.97 is suspended while it is open.</p>
+</section>
+
+<section id="s4"><h2><span class="num">4</span>Pair unexpected balances</h2>
+<p>For each account, what AR has posted against what the bank says was received.</p>
+<div class="scroll"><table class=""><thead><tr><th class="" scope="col">Account</th><th class="n" scope="col">Invoiced</th><th class="n" scope="col">Posted in AR</th><th class="n" scope="col">Received per bank</th><th class="n" scope="col">Balance as posted</th><th class="" scope="col">Unexpected</th></tr></thead><tbody><tr><td class="">A-1001</td><td class="n">$3,339.13</td><td class="n">$3,339.13</td><td class="n">$3,339.13</td><td class="n">$0.00</td><td class=""></td></tr><tr><td class="">A-1002</td><td class="n">$109.48</td><td class="n">$0.00</td><td class="n">$109.48</td><td class="n">$109.48</td><td class=""><span class="chip bad"><span aria-hidden="true">✗</span> Unpaid $109.48</span></td></tr><tr><td class="">A-1003</td><td class="n">$2,546.42</td><td class="n">$2,533.45</td><td class="n">$2,533.45</td><td class="n">$12.97</td><td class=""></td></tr><tr><td class="">A-1020</td><td class="n">$87.12</td><td class="n">$196.60</td><td class="n">$87.12</td><td class="n">−$109.48</td><td class=""><span class="chip bad"><span aria-hidden="true">✗</span> Credit $109.48</span></td></tr></tbody></table></div>
+<p class="callout">A-1002 shows $109.48 unpaid that the bank says was received on Jan 15,
+and A-1020 shows a $109.48 credit posted the same day. Same amount, same date, opposite signs: one
+payment on the wrong account. The remittance memo said A-1002; it was keyed as A-1020
+(transposed digits). A-1020 had already paid its own invoice by autopay, so the credit had no explanation.</p>
+<p>The correction reverses the posting and reposts it to A-1002, effective the date the bank received it:</p>
+<div class="scroll"><table class=""><thead><tr><th class="" scope="col">Posted</th><th class="" scope="col">Account</th><th class="n" scope="col">Amount</th><th class="" scope="col">Reference</th><th class="" scope="col">Note</th></tr></thead><tbody><tr><td class="">Jan 22</td><td class="">A-1020</td><td class="n">−$109.48</td><td class="">CHK-20270115-2204</td><td class="">Reverse: belongs to A-1002 (transposed digits)</td></tr><tr><td class="">Jan 22</td><td class="">A-1002</td><td class="n">+$109.48</td><td class="">CHK-20270115-2204</td><td class="">Repost, effective 2027-01-15 (date received)</td></tr></tbody></table></div>
+<p>Left alone, the February 1 bill would have charged interest that isn't owed:</p>
+<div class="scroll"><table class=""><thead><tr><th class="" scope="col">Account</th><th class="n" scope="col">Feb 1 interest as posted</th><th class="n" scope="col">Correct</th><th class="n" scope="col">Difference</th><th class="" scope="col">Why</th></tr></thead><tbody><tr><td class="">A-1002</td><td class="n">$0.32</td><td class="n">$0.00</td><td class="n">$0.32</td><td class="">Cash posted to the wrong account</td></tr><tr><td class="">A-1003</td><td class="n">$0.04</td><td class="n">$0.00</td><td class="n">$0.04</td><td class="">Amount in dispute; no interest while open</td></tr></tbody></table></div>
+</section>
+
+<section id="s5"><h2><span class="num">5</span>Invoice against submitted reads</h2>
+<p>For each account, November's kWh as invoiced so far against the register read as it was submitted, and when it was
+submitted against the true-up cutoff (Dec 28, 17:00).</p>
+<div class="scroll"><table class=""><thead><tr><th class="" scope="col">Account</th><th class="" scope="col">Meter</th><th class="" scope="col">November on invoices</th><th class="n" scope="col">Invoiced kWh</th><th class="n" scope="col">Read kWh (submitted)</th><th class="" scope="col">Read</th><th class="" scope="col">Submitted</th><th class="" scope="col">Result</th></tr></thead><tbody><tr><td class="">A-1001</td><td class="">M1</td><td class="">Final (true-up applied)</td><td class="n">16,112.055</td><td class="n">16,112</td><td class="">AMI</td><td class="">Dec 1, 06:10</td><td class=""><span class="chip na"><span aria-hidden="true">–</span> Matches</span></td></tr><tr><td class="">A-1002</td><td class="">M2</td><td class="">Estimated (no true-up yet)</td><td class="n">787.057</td><td class="n">786</td><td class="">Field verification</td><td class="">Dec 29, 09:14</td><td class=""><span class="chip ok"><span aria-hidden="true">✓</span> Timing gap</span></td></tr><tr><td class="">A-1003</td><td class="">M3</td><td class="">Final (true-up applied)</td><td class="n">18,380.318</td><td class="n">18,380</td><td class="">AMI</td><td class="">Dec 1, 06:10</td><td class=""><span class="chip na"><span aria-hidden="true">–</span> Matches</span></td></tr></tbody></table></div>
+<p class="callout">A-1002's meter read came in flagged, so a field verification was ordered. The tech confirmed
+the read December 28 and it was keyed Dec 29, 09:14, after the cutoff. The January 1 true-up ran without it, so
+November is still billed on estimated usage. Nothing is wrong with either number: the read arrived too late to be picked up.
+The February 1 invoice carries the true-up (−$0.14).</p>
+<p>From the payer's side of a counterparty invoice, every mismatch traced to one of two causes: the data submitted wasn't
+what we believed we had submitted, or the counterparty didn't pick it up, usually because of timing. When an invoice and
+your records disagree, check both before deciding which side is wrong. For A-1003 this check does the opposite
+job: the invoiced kWh match the read, submitted on time, so the disputed charge is right.</p>
+</section>
+
+<section id="s6"><h2><span class="num">6</span>Trace back</h2>
+<p>The disputed line, followed upstream to where it came from.</p>
+<ol class="chain">
+<li><span class="where">Invoicing</span><b>INV-202701-1003: “Adjustment” +$12.97</b>,
+no original invoice, no service period, no quantities.</li>
+<li><span class="where">Billing</span><b>True-up, November service (prior-period adjustment): +$12.97</b> on the
+January 1 statement.</li>
+<li><span class="where">Rating</span><b>November final minus November initial, on the corrected setup.</b><div class="scroll"><table class=""><thead><tr><th class="" scope="col">Charge</th><th class="n" scope="col">Initial kWh</th><th class="n" scope="col">Final kWh</th><th class="n" scope="col">Initial</th><th class="n" scope="col">Final</th><th class="n" scope="col">Difference</th></tr></thead><tbody><tr><td class="">Energy, on-peak</td><td class="n">6,043.760</td><td class="n">6,043.684</td><td class="n">$725.25</td><td class="n">$725.24</td><td class="n">−$0.01</td></tr><tr><td class="">Energy, off-peak</td><td class="n">12,214.181</td><td class="n">12,336.634</td><td class="n">$854.99</td><td class="n">$863.56</td><td class="n">+$8.57</td></tr><tr><td class="">Delivery</td><td class="n">18,257.941</td><td class="n">18,380.318</td><td class="n">$657.28</td><td class="n">$661.69</td><td class="n">+$4.41</td></tr><tr><td class=""><b>True-up</b></td><td class="n"></td><td class="n"></td><td class="n"></td><td class="n"></td><td class="n"><b>+$12.97</b></td></tr></tbody></table></div></li>
+<li><span class="where">Metering</span><b>24 estimated intervals on M3</b>, labeled
+Nov 18, 02:15 to 08:00, interpolated at 125.928 kWh. The meter read says
+248.305 kWh: the gap covered an overnight furnace run, and a straight line can't see it. Difference
++122.377 kWh.</li>
+<li><span class="where">Submission</span><b>AMI read submitted Dec 1, 06:10</b>, well before
+the cutoff; invoiced kWh 18,380.318 against a read of 18,380.</li>
+</ol>
+<p><span class="chip ok"><span aria-hidden="true">✓</span> invoice = statement</span> <span class="chip ok"><span aria-hidden="true">✓</span> statement = rating</span> <span class="chip ok"><span aria-hidden="true">✓</span> rating kWh = metering kWh</span></p>
+<p class="callout">The amount started in metering, and that part is the process working: estimate, then true up. The problem
+started in invoicing, where the true-up lost its reference. The fix goes where the problem began, not where it surfaced:
+the invoice lookup now includes adjusted invoices, and the invoice is reissued with the reference.</p>
+</section>
+
+<section id="dispute"><h2>Dispute log</h2>
+<div class="evidence"><dl>
+<dt>Dispute</dt><dd>DSP-0001, A-1003, opened Jan 22</dd>
+<dt>Disputed line</dt><dd>INV-202701-1003, “Adjustment”, $12.97</dd>
+<dt>Customer said</dt><dd>Paid everything except the $12.97 “Adjustment”; the invoice doesn&#x27;t say what it is for.</dd>
+<dt>What was submitted, and when</dt><dd>AMI register read, 18,380 kWh for November, submitted
+Dec 1, 06:10</dd>
+<dt>Calculation cutoff</dt><dd>Dec 28, 17:00; read was in on time</dd>
+<dt>Upstream trace</dt><dd>24 estimated intervals, +122.377 kWh → true-up
++$12.97 → statement → invoice line with no reference</dd>
+<dt>Finding</dt><dd>Charge is correct; the invoice left off its reference</dd>
+<dt>Interest</dt><dd>Suspended while open</dd>
+<dt>Resolution</dt><dd>Reissued as INV-202701-1003-R1 on Jan 27, 2027 with original invoice, service period, and billed vs actual quantities; balance due Feb 16, 2027</dd>
+<dt>Closed</dt><dd>Feb 3: Payment ACH-20270203-0129 for $12.97</dd>
+</dl></div>
+<p>With the evidence in one place, the dispute is settled in one exchange: here is the invoice it adjusts, the service period,
+the intervals that were estimated, and the read that replaced them.</p>
+<div class="reissue"><a class="thumb" href="invoices/INV-202701-1003-R1.pdf"><img src="invoices/INV-202701-1003-R1.png" alt="Page 1 of reissued sample invoice INV-202701-1003-R1"></a>
+<div><p><b>INV-202701-1003-R1</b>, reissued Jan 27. Same charges; the adjustment now shows the
+invoice it adjusts, the service period, and billed vs actual quantities per charge. Payment received is applied, leaving
+$12.97 due Feb 16.</p>
+<p>Invoicing's adjustment-reference check on the reissued invoice: <span class="chip ok"><span aria-hidden="true">✓</span> Passes</span></p>
+<p><a href="invoices/INV-202701-1003-R1.pdf">Open the reissued invoice (PDF)</a></p></div></div>
+</section>
+
+<section id="aging"><h2>Aging</h2>
+<div class="scroll"><table class=""><thead><tr><th class="" scope="col">Account</th><th class="" scope="col">As posted (Jan 22)</th><th class="" scope="col">After reposting (Jan 31)</th><th class="" scope="col">After reissue and payment (Feb 28)</th></tr></thead><tbody><tr><td class="">A-1001</td><td class="">$0.00</td><td class="">$0.00</td><td class="">$0.00</td></tr><tr><td class="">A-1002</td><td class="">$109.48, 1–30 days</td><td class="">$0.00</td><td class="">$0.00</td></tr><tr><td class="">A-1003</td><td class="">$12.97, 1–30 days (in dispute)</td><td class="">$12.97, 1–30 days (in dispute)</td><td class="">$0.00</td></tr><tr><td class="">A-1020</td><td class="">−$109.48 credit</td><td class="">$0.00</td><td class="">$0.00</td></tr></tbody></table></div>
+<p>As posted, AR shows two past-due balances and a credit nobody can explain. After reposting, only the disputed
+$12.97 is open, and it accrues nothing. After the reissue and payment, every account is at zero.</p>
+</section>
+
+<section><h2>The whole chain</h2>
+<ol class="chain">
+<li><span class="where"><a href="metering_report.html">Metering</a></span>A six-hour collector outage on November 18 is
+filled by interpolation; the initial bill uses the estimate.</li>
+<li><span class="where"><a href="rating_report.html">Rating</a></span>The final run on actual reads prices the difference.</li>
+<li><span class="where"><a href="billing_report.html">Billing</a></span>The January 1 statement carries it as a
++$12.97 true-up, no interest.</li>
+<li><span class="where"><a href="invoicing_report.html">Invoicing</a></span>The lookup misses the adjusted December invoice,
+and the true-up prints as a bare “Adjustment.”</li>
+<li><span class="where">Collection</span>The customer pays everything else. The shortfall matches the line, the trace finds
+the cause, the invoice is reissued, and the customer pays.</li>
+</ol>
+</section>
+
+<section><h2>Outputs</h2>
+<ul class="files">
+<li><code>output/cash_application.csv</code>: each receipt, how it matched, and its classification.</li>
+<li><code>output/dispute_log.csv</code>: the dispute, with its evidence package.</li>
+<li><code>output/read_check.csv</code>: invoiced kWh against submitted reads and the cutoff.</li>
+<li><code>output/ar_corrections.csv</code>: the reposting and the payment after reissue.</li>
+<li><code>output/aging.csv</code>: aging as posted, after reposting, and after resolution.</li>
+<li><code>output/invoices/INV-202701-1003-R1.pdf</code>: the reissued invoice.</li>
+</ul></section>
+
+<footer><p>Synthetic data (seed 7). Company, customers and addresses are fictional.
+Scenario design from real settlement work by Archer Opitz; built with AI assistance.</p></footer>
+</main></body></html>

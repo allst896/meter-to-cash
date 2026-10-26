@@ -41,11 +41,9 @@ INV-202701-1002,detail,1.0,month,10.0,,,,CURRENT,A-1002,CURRENT,Customer charge,
 INV-202701-1002,detail,294.14,kWh,0.13,,,,CURRENT,A-1002,CURRENT,"Energy, on-peak",38.24
 INV-202701-1002,detail,514.641,kWh,0.07,,,,CURRENT,A-1002,CURRENT,"Energy, off-peak",36.02
 INV-202701-1002,detail,808.781,kWh,0.031,,,,CURRENT,A-1002,CURRENT,Delivery (LZ_NORTH),25.07
-INV-202701-1002,detail,,,,INV-202612-1002,"Nov 1–30, 2026","[{""what"": ""Energy, on-peak"", ""rate"": 0.12, ""billed_qty"": 269.155, ""billed_amount"": 32.3, ""actual_qty"": 269.27, ""actual_amount"": 32.31, ""amount"": 0.01}, {""what"": ""Energy, off-peak"", ""rate"": 0.07, ""billed_qty"": 517.902, ""billed_amount"": 36.26, ""actual_qty"": 516.452, ""actual_amount"": 36.15, ""amount"": -0.11}, {""what"": ""Delivery"", ""rate"": 0.031, ""billed_qty"": 787.057, ""billed_amount"": 24.4, ""actual_qty"": 785.722, ""actual_amount"": 24.36, ""amount"": -0.04}]",TRUE_UP,A-1002,ADJUSTMENT,"Prior-period adjustment: November service, true-up of estimated usage",-0.14
 INV-202701-1002,summary,,,,,,,,A-1002,PAYMENT,Payments received,-102.96
 INV-202701-1002,summary,,,,,,,,A-1002,INTEREST,Interest,0.15
 INV-202701-1002,summary,,,,,,,,A-1002,CURRENT,"Current charges, December",109.33
-INV-202701-1002,summary,,,,,,,,A-1002,ADJUSTMENT,Prior-period adjustments,-0.14
 INV-202701-1003,summary,,,,,,,PRIOR,A-1003,PRIOR,Prior balance (Dec 1 invoice),2633.59
 INV-202701-1003,detail,,,,,,,PAYMENT,A-1003,PAYMENT,Payment received 2026-12-20 (ACH-20261220-0552),-2633.59
 INV-202701-1003,detail,,,,INV-202612-1003,"Nov 1–30, 2026","[{""what"": ""November delivery"", ""qty"": 18257.941, ""rate_billed"": 0.044, ""billed_amount"": 803.35, ""rate_correct"": 0.036, ""correct_amount"": 657.28}]",CREDIT,A-1003,CREDIT,"Credit CR-0003: Delivery zone corrected LZ_WEST to LZ_HOUSTON, November service",-146.07

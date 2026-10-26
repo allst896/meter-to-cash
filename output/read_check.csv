@@ -1,0 +1,4 @@
+account_id,meter_id,basis,invoiced_kwh,read_kwh,difference_kwh,read_type,submitted_at,cutoff,on_time,pending_true_up,verdict,side
+A-1001,M1,Final (true-up applied),16112.055,16112.0,0.055,AMI,2026-12-01 06:10,2026-12-28 17:00,True,0.0,Invoice matches the submitted read,Neither
+A-1002,M2,Estimated (no true-up yet),787.057,786.0,1.057,Field verification,2026-12-29 09:14,2026-12-28 17:00,False,-0.14,Timing gap: read submitted after the cutoff; picked up on the February 1 invoice,Neither (timing)
+A-1003,M3,Final (true-up applied),18380.318,18380.0,0.318,AMI,2026-12-01 06:10,2026-12-28 17:00,True,0.0,Invoice matches the submitted read,Neither

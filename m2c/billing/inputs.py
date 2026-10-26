@@ -7,6 +7,12 @@ From the earlier stages
   November true-up   corrected final minus corrected initial (metering's estimate replaced by actuals)
   December charges   December usage rated on the corrected setup (on-peak at the new $0.13 rate)
 
+Read submissions
+  When each meter's Dec 1 register read was submitted. The true-up only uses finals whose register read
+  was in by the cutoff. Planted: M2's AMI read came in flagged, so a field verification read was ordered;
+  the tech confirmed it Dec 28 and it was keyed Dec 29, after the Dec 28 17:00 cutoff. Nothing is wrong
+  with the number; it arrived too late for the January 1 true-up.
+
 Cash
   Bank remittance    what actually arrived, and when (the source of record)
   Payment ledger     what was keyed into billing. Planted: A-1001's partial payment received Dec 18
@@ -87,7 +93,15 @@ def build(data_dir, rating_dir, usage_path, seed=7):
     ledger.loc[ledger["reference"] == "ACH-20261218-0417", "payment_date"] = "2026-12-28"   # the slip
     ledger = ledger[["account_id", "payment_date", "amount", "reference", "entered_on", "entered_by"]]
 
+    reads = pd.DataFrame([
+        ("M1", "2026-12-01 00:00", "AMI", "2026-12-01 00:00", "2026-12-01 06:10", ""),
+        ("M2", "2026-12-01 00:00", "Field verification", "2026-12-28 14:40", "2026-12-29 09:14",
+         "AMI read flagged (communication error); field verification ordered Dec 4"),
+        ("M3", "2026-12-01 00:00", "AMI", "2026-12-01 00:00", "2026-12-01 06:10", ""),
+    ], columns=["meter_id", "read_for", "read_type", "read_taken", "submitted_at", "note"])
+
     acct.to_csv(f"{data_dir}/accounts.csv", index=False)
+    reads.to_csv(f"{data_dir}/read_submissions.csv", index=False)
     dec1.to_csv(f"{data_dir}/dec1_bills.csv", index=False)
     lines.to_csv(f"{data_dir}/rated_lines.csv", index=False)
     credits.to_csv(f"{data_dir}/credits.csv", index=False)

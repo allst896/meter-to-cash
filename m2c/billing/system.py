@@ -5,15 +5,17 @@ Terms: 18% a year, actual days / 365, accrued daily on the unpaid December 1 bal
 grace period (from Dec 26). Payments and credits reduce the balance from their dates (credits as of
 their effective date, before interest). No interest on the true-up: it was not billed before Jan 1.
 
-The system takes payment dates from the payment ledger, as keyed.
+The system takes payment dates from the payment ledger, as keyed. The November true-up is run only for
+meters whose Dec 1 register read was submitted by the cutoff; the rest wait for the next bill.
 """
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 
 import pandas as pd
 
 RATE, BASIS, GRACE_DAYS = 0.18, 365, 5
 STATEMENT_DATE = date(2027, 1, 1)
 NEW_DUE = date(2027, 1, 21)
+TRUEUP_CUTOFF = datetime(2026, 12, 28, 17, 0)      # local time; reads submitted later wait a month
 
 
 def interest_daily(prior, due, reductions, statement_date=STATEMENT_DATE):
@@ -33,8 +35,17 @@ def load(data_dir):
     acct, dec1, lines = rd("accounts.csv"), rd("dec1_bills.csv"), rd("rated_lines.csv")
     credits = rd("credits.csv") if open(f"{data_dir}/credits.csv").read().strip() else pd.DataFrame(
         columns=["credit_id", "account_id", "effective_date", "amount", "reason"])
-    return dict(accounts=acct, dec1=dec1, lines=lines, credits=credits,
+    import os
+    reads = rd("read_submissions.csv") if os.path.exists(f"{data_dir}/read_submissions.csv") else pd.DataFrame(
+        {"meter_id": acct["meter_id"], "submitted_at": "2026-12-01 00:00"})
+    return dict(accounts=acct, dec1=dec1, lines=lines, credits=credits, reads=reads,
                 bank=rd("bank_remittance.csv"), ledger=rd("payment_ledger.csv"))
+
+
+def true_up_ready(d, meter_id):
+    """Was this meter's register read submitted by the true-up cutoff?"""
+    r = d["reads"].set_index("meter_id")
+    return meter_id in r.index and datetime.fromisoformat(r.loc[meter_id, "submitted_at"]) <= TRUEUP_CUTOFF
 
 
 def statements(d, payments=None, version="as billed"):
@@ -61,8 +72,9 @@ def statements(d, payments=None, version="as billed"):
         rows += [("CREDIT", f"Credit {c.credit_id}: {c.reason}", c.effective_date, -float(c.amount))
                  for c in creds.itertuples()]
         rows += [("INTEREST", f"Interest at {RATE:.0%}/yr after {GRACE_DAYS}-day grace", "", interest),
-                 ("CURRENT", "Current charges, December service", "", current),
-                 ("TRUE_UP", "True-up, November service (prior-period adjustment)", "", true_up)]
+                 ("CURRENT", "Current charges, December service", "", current)]
+        if true_up_ready(d, m):
+            rows.append(("TRUE_UP", "True-up, November service (prior-period adjustment)", "", true_up))
         total = round(sum(r[3] for r in rows), 2)
         rows.append(("AMOUNT_DUE", f"Amount due by {NEW_DUE.isoformat()}", "", total))
         for i, (code, desc, dt, amount) in enumerate(rows):

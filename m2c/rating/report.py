@@ -187,7 +187,7 @@ def render(r, seed):
 <style>{CSS}</style></head><body><main>
 
 <header>
-<nav class="stagenav" aria-label="Stages"><a href="metering_report.html">1 Metering</a><span>2 Rating</span><a href="billing_report.html">3 Billing</a><a href="invoicing_report.html">4 Invoicing</a></nav>
+<nav class="stagenav" aria-label="Stages"><a href="metering_report.html">1 Metering</a><span>2 Rating</span><a href="billing_report.html">3 Billing</a><a href="invoicing_report.html">4 Invoicing</a><a href="collection_report.html">5 Collection</a></nav>
 <p class="kicker">Meter-to-cash demo · Stage 2 of 5: Rating</p>
 <h1>Every unit priced, in the right group, at the right rate</h1>
 <p class="lede">November's usage is rated by the production engine and, in parallel, by the upgraded engine that will replace it.
