@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Meter to Cash</title>
+<meta name="description" content="A five-stage walkthrough of how billing numbers go wrong between the meter and the payment, and the checks that prove where. Synthetic data; scenario design from real settlement work.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fcfcfb;--ink:#0b0b0b;--ink2:#52514e;--muted:#6f6e69;--rule:#dcdad4;--panel:#f2f1ed;--accent:#1f4e79}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1a1a19;--ink:#f0efec;--ink2:#c3c2b7;--muted:#9c9b92;--rule:#34332f;--panel:#232321;--accent:#8db8e3}}
+:root[data-theme="dark"]{--bg:#1a1a19;--ink:#f0efec;--ink2:#c3c2b7;--muted:#9c9b92;--rule:#34332f;--panel:#232321;--accent:#8db8e3}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "IBM Plex Sans",system-ui,sans-serif;font-variant-numeric:tabular-nums}
+main{max-width:960px;margin:0 auto;padding:56px 16px 64px}
+a{color:var(--ink)}
+.kicker{color:var(--muted);margin:0 0 8px;font-weight:500}
+h1{font-size:clamp(2rem,5vw,3rem);line-height:1.1;margin:0 0 18px;font-weight:600;letter-spacing:-.015em;max-width:20ch}
+.lede{font-size:1.15rem;max-width:64ch;margin:0 0 14px;color:var(--ink2)}
+.start{display:inline-block;margin-top:10px;padding:9px 16px;border:1px solid var(--ink);border-radius:4px;text-decoration:none;font-weight:500}
+.start:hover{background:var(--ink);color:var(--bg)}
+section{margin:56px 0 0}
+h2{font-size:1.35rem;font-weight:600;margin:0 0 14px}
+section > p{max-width:70ch;color:var(--ink2);margin:0 0 14px}
+ol.stages{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule)}
+.stages li{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:4px 18px;padding:20px 0;border-bottom:1px solid var(--rule)}
+.stages .n{font-family:"IBM Plex Mono",monospace;color:var(--muted);font-size:1.05rem;padding-top:2px}
+.stages h3{margin:0;font-size:1.12rem;font-weight:600}
+.stages .q{margin:2px 0 8px;color:var(--muted);font-size:.95rem}
+.stages .found{margin:0;color:var(--ink2);max-width:62ch}
+.stages .go{align-self:start;white-space:nowrap;font-weight:500;padding-top:2px}
+.trail{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;margin:0 0 14px;border:1px solid var(--rule);border-radius:6px;overflow:hidden}
+.trail div{padding:14px 14px 16px;border-right:1px solid var(--rule);background:var(--panel)}
+.trail div:last-child{border-right:0}
+.trail .where{font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:4px}
+.trail b{display:block;font-size:1.05rem;margin-bottom:4px;color:var(--ink)}
+.trail span.t{font-size:.9rem;color:var(--ink2)}
+ul.facts{margin:0;padding-left:20px;color:var(--ink2);max-width:70ch}
+ul.facts li{margin:0 0 6px}
+footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--rule);font-size:.88rem;color:var(--muted)}
+@media (max-width:720px){
+  .stages li{grid-template-columns:32px minmax(0,1fr)}
+  .stages .go{grid-column:2}
+  .trail{grid-template-columns:1fr}
+  .trail div{border-right:0;border-bottom:1px solid var(--rule)}
+  .trail div:last-child{border-bottom:0}
+}
+</style></head><body><main>
+
+<header>
+<p class="kicker">A portfolio demo by Archer Opitz · Opitz Consulting LLC</p>
+<h1>Meter to cash: where billing numbers go wrong</h1>
+<p class="lede">One month of usage for three customers, followed from the meter to the payment. Each stage plants
+problems I've run into in real settlement work, the kind that pass the usual totals check, and then finds them
+with checks a reviewer can follow, down to the interval, the rate, the date and the cent.</p>
+<a class="start" href="output/metering_report.html">Start with metering →</a>
+</header>
+
+<section>
+<h2>Five stages</h2>
+<ol class="stages">
+<li><span class="n">1</span><div><h3>Metering</h3><p class="q">Which usage feed is wrong, and why?</p>
+<p class="found">A feed with exactly 30 × 96 rows passes a month-level count yet comes up 332.8 kWh short. Counting
+intervals per day, before any cleaning, finds a six-hour outage, and keeps the repeated hour when daylight saving
+time ends that a naive cleanup would delete.</p></div><a class="go" href="output/metering_report.html">Report →</a></li>
+
+<li><span class="n">2</span><div><h3>Rating</h3><p class="q">Is every unit priced, in the right category, at the right rate?</p>
+<p class="found">A meter in the wrong load zone, usage left unpriced after a migration, and a new engine that looks up
+rates by run date instead of service period. Two of the three leave every kWh priced; no single check catches all
+three.</p></div><a class="go" href="output/rating_report.html">Report →</a></li>
+
+<li><span class="n">3</span><div><h3>Billing</h3><p class="q">Does the statement roll forward, and is the interest right?</p>
+<p class="found">Every statement ties to the cent, yet one customer is charged $1.28 too much interest: a payment
+received December 18 was keyed as December 28. Only an independent recalculation from the bank remittance shows it.</p></div>
+<a class="go" href="output/billing_report.html">Report →</a></li>
+
+<li><span class="n">4</span><div><h3>Invoicing</h3><p class="q">Can the customer check the invoice themselves?</p>
+<p class="found">Six sample PDF invoices, all tying to their statements. Two still fail the customer: a true-up printed as
+current energy, and a bare $12.97 “Adjustment” with no reference. A recompute from only what's printed finds both.</p></div>
+<a class="go" href="output/invoicing_report.html">Report →</a></li>
+
+<li><span class="n">5</span><div><h3>Collection</h3><p class="q">Does each payment equal its invoice, and if not, why?</p>
+<p class="found">A short-pay that equals one invoice line exactly, a check keyed to the wrong account, and a meter read
+that arrived a day after the cutoff. The dispute is settled on the evidence in one exchange, and aging clears.</p></div>
+<a class="go" href="output/collection_report.html">Report →</a></li>
+</ol>
+</section>
+
+<section>
+<h2>Follow one charge through all five</h2>
+<p>The same $12.97 shows up at every stage. It starts as a reasonable estimate and ends as a disputed short-pay, and
+the fix belongs at the stage where the problem began, not where it surfaced.</p>
+<div class="trail">
+<div><span class="where">Metering</span><b>+122.377 kWh</b><span class="t">An outage is filled by interpolation, which misses an overnight furnace run.</span></div>
+<div><span class="where">Rating</span><b>+$12.97</b><span class="t">The final run on actual reads prices the difference.</span></div>
+<div><span class="where">Billing</span><b>True-up</b><span class="t">Carried on the January 1 statement, with no interest.</span></div>
+<div><span class="where">Invoicing</span><b>“Adjustment”</b><span class="t">A lookup misses the adjusted December invoice, so the reference is dropped.</span></div>
+<div><span class="where">Collection</span><b>Short $12.97</b><span class="t">The customer pays everything else. Reissued with the reference, it's paid.</span></div>
+</div>
+</section>
+
+<section>
+<h2>How it's built</h2>
+<ul class="facts">
+<li>Synthetic data for one month (November 2026, America/Chicago, 15-minute interval-ending), generated from a seed.</li>
+<li>Python and pandas. The checks read the inputs, never an answer key, so they work the same on a different month.</li>
+<li>The planted problems and the key figures in each report are checked by tests, run across three different random months.</li>
+<li>Invoices are generated as PDFs from a fictional utility. All companies, customers and addresses are made up.</li>
+<li id="src-item" hidden>Source code and data: <a id="src" href="#">on GitHub</a>.</li>
+</ul>
+</section>
+
+<section>
+<h2>About</h2>
+<p>I've worked in energy settlements for about 20 years, with experience in full-stack development, energy market
+analysis and EMS/SCADA systems along the way. The scenarios here come from that work: finding a daylight-saving bug by counting
+intervals per day, catching grouping mistakes with delta-from-normal checks, comparing systems during an upgrade,
+recalculating interest independently, and validating counterparty invoices against what was actually submitted.
+The work carries over to any business that meters usage and bills for it.</p>
+<p>Get in touch on <a href="https://www.linkedin.com/in/archer-opitz-4116a6140/" rel="me noopener">LinkedIn</a>.</p>
+</section>
+
+<footer><p>Scenario design from real settlement work by Archer Opitz; built with AI assistance. Opitz Consulting LLC.</p></footer>
+</main>
+<script>
+// On GitHub Pages (user.github.io/repo/), link to the matching repository.
+(function () {
+  var h = location.hostname, m = h.match(/^([a-z0-9-]+)\.github\.io$/i);
+  if (!m) return;
+  var repo = location.pathname.split("/").filter(Boolean)[0];
+  if (!repo) return;
+  document.getElementById("src").href = "https://github.com/" + m[1] + "/" + repo;
+  document.getElementById("src-item").hidden = false;
+})();
+</script>
+</body></html>
